@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { CreatePostInput, UpdatePostInput, CreateCommentInput } from '@/lib/validations/post'
+import type { CreatePostInput, UpdatePostInput, CreateCommentInput, UpdateCommentInput } from '@/lib/validations/post'
 
 /**
  * Get all posts
@@ -134,6 +134,56 @@ export function useCreateComment(postId: string) {
       if (!res.ok) {
         const error = await res.json()
         throw new Error(error.error || 'Failed to create comment')
+      }
+      return res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts', postId] })
+    },
+  })
+}
+
+/**
+ * Update a comment
+ */
+export function useUpdateComment(postId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ commentId, data }: { commentId: string; data: UpdateCommentInput }) => {
+      const res = await fetch(`/api/comments/${commentId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      })
+      if (!res.ok) {
+        const error = await res.json()
+        throw new Error(error.error || 'Failed to update comment')
+      }
+      return res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts', postId] })
+    },
+  })
+}
+
+/**
+ * Delete a comment
+ */
+export function useDeleteComment(postId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (commentId: string) => {
+      const res = await fetch(`/api/comments/${commentId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+      if (!res.ok) {
+        const error = await res.json()
+        throw new Error(error.error || 'Failed to delete comment')
       }
       return res.json()
     },

@@ -2,13 +2,16 @@
 
 import { use } from 'react'
 import { useRouter } from 'next/navigation'
-import { usePost, useDeletePost } from '@/lib/hooks/use-posts'
+import { usePost, useDeletePost, useUpdatePost } from '@/lib/hooks/use-posts'
 import { CommentList } from '@/components/posts/comment-list'
 import { CommentForm } from '@/components/posts/comment-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
+import { Pencil, X } from 'lucide-react'
 
 export default function PostDetailPage({ params }: { params: Promise<{ postId: string }> }) {
   const resolvedParams = use(params)
@@ -16,7 +19,11 @@ export default function PostDetailPage({ params }: { params: Promise<{ postId: s
   const router = useRouter()
   const { data, isLoading, error } = usePost(postId)
   const deletePost = useDeletePost()
+  const updatePost = useUpdatePost(postId)
   const [currentUserId, setCurrentUserId] = useState<string>('')
+  const [isEditing, setIsEditing] = useState(false)
+  const [editTitle, setEditTitle] = useState('')
+  const [editContent, setEditContent] = useState('')
 
   // Get current user ID from session
   useEffect(() => {
@@ -35,6 +42,40 @@ export default function PostDetailPage({ params }: { params: Promise<{ postId: s
     }
     fetchSession()
   }, [])
+
+  function handleStartEdit() {
+    if (data?.post) {
+      setEditTitle(data.post.title)
+      setEditContent(data.post.content)
+      setIsEditing(true)
+    }
+  }
+
+  function handleCancelEdit() {
+    setIsEditing(false)
+    setEditTitle('')
+    setEditContent('')
+  }
+
+  async function handleSaveEdit() {
+    if (!editTitle.trim() || !editContent.trim()) {
+      toast.error('Title and content cannot be empty')
+      return
+    }
+
+    try {
+      await updatePost.mutateAsync({
+        title: editTitle,
+        content: editContent,
+      })
+      toast.success('Post updated successfully!')
+      setIsEditing(false)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to update post'
+      console.error('Failed to update post:', err)
+      toast.error(message)
+    }
+  }
 
   async function handleDelete() {
     if (!confirm('Are you sure you want to delete this post?')) {
@@ -106,27 +147,81 @@ export default function PostDetailPage({ params }: { params: Promise<{ postId: s
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-3xl mb-2">{post.title}</CardTitle>
+              {isEditing ? (
+                <Input
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="text-3xl mb-2 font-bold"
+                  placeholder="Post title"
+                  disabled={updatePost.isPending}
+                />
+              ) : (
+                <CardTitle className="text-3xl mb-2">{post.title}</CardTitle>
+              )}
               <CardDescription>
                 by {post.author.name} · {formattedDate}
               </CardDescription>
             </div>
             {isAuthor && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleDelete}
-                disabled={deletePost.isPending}
-              >
-                {deletePost.isPending ? 'Deleting...' : 'Delete'}
-              </Button>
+              <div className="flex gap-2">
+                {isEditing ? (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleCancelEdit}
+                      disabled={updatePost.isPending}
+                    >
+                      <X className="h-4 w-4 mr-1" />
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={handleSaveEdit}
+                      disabled={updatePost.isPending}
+                    >
+                      {updatePost.isPending ? 'Saving...' : 'Save'}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleStartEdit}
+                    >
+                      <Pencil className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleDelete}
+                      disabled={deletePost.isPending}
+                    >
+                      {deletePost.isPending ? 'Deleting...' : 'Delete'}
+                    </Button>
+                  </>
+                )}
+              </div>
             )}
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-700 whitespace-pre-wrap text-lg leading-relaxed">
-            {post.content}
-          </p>
+          {isEditing ? (
+            <Textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              className="min-h-[200px] text-lg"
+              placeholder="Post content"
+              disabled={updatePost.isPending}
+            />
+          ) : (
+            <p className="text-gray-700 whitespace-pre-wrap text-lg leading-relaxed">
+              {post.content}
+            </p>
+          )}
         </CardContent>
       </Card>
 
@@ -137,7 +232,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ postId: s
 
         <CommentForm postId={postId} />
 
-        <CommentList comments={post.comments || []} />
+        <CommentList comments={post.comments || []} postId={postId} />
       </div>
     </div>
   )

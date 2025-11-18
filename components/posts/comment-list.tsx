@@ -1,3 +1,5 @@
+import { CommentItem } from './comment-item'
+
 interface CommentListProps {
   comments: Array<{
     id: string
@@ -8,9 +10,10 @@ interface CommentListProps {
       name: string
     }
   }>
+  postId: string
 }
 
-export function CommentList({ comments }: CommentListProps) {
+export function CommentList({ comments, postId }: CommentListProps) {
   if (comments.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -21,25 +24,9 @@ export function CommentList({ comments }: CommentListProps) {
 
   return (
     <div className="space-y-4">
-      {comments.map((comment) => {
-        const formattedDate = new Date(comment.createdAt).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-
-        return (
-          <div key={comment.id} className="bg-gray-50 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-medium text-gray-900">{comment.author.name}</span>
-              <span className="text-sm text-gray-500">{formattedDate}</span>
-            </div>
-            <p className="text-gray-700 whitespace-pre-wrap">{comment.content}</p>
-          </div>
-        )
-      })}
+      {comments.map((comment) => (
+        <CommentItem key={comment.id} comment={comment} postId={postId} />
+      ))}
     </div>
   )
 }
