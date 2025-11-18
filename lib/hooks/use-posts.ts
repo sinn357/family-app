@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { CreatePostInput, UpdatePostInput, CreateCommentInput, UpdateCommentInput } from '@/lib/validations/post'
+import { handleApiError } from '@/lib/utils/error'
 
 /**
  * Get all posts
@@ -12,8 +13,7 @@ export function usePosts() {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to fetch posts')
+        await handleApiError(res)
       }
       return res.json()
     },
@@ -31,8 +31,7 @@ export function usePost(postId: string) {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to fetch post')
+        await handleApiError(res)
       }
       return res.json()
     },
@@ -55,8 +54,7 @@ export function useCreatePost() {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to create post')
+        await handleApiError(res)
       }
       return res.json()
     },
@@ -81,8 +79,7 @@ export function useUpdatePost(postId: string) {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to update post')
+        await handleApiError(res)
       }
       return res.json()
     },
@@ -106,8 +103,7 @@ export function useDeletePost() {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to delete post')
+        await handleApiError(res)
       }
       return res.json()
     },
@@ -132,8 +128,7 @@ export function useCreateComment(postId: string) {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to create comment')
+        await handleApiError(res)
       }
       return res.json()
     },
@@ -158,8 +153,7 @@ export function useUpdateComment(postId: string) {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to update comment')
+        await handleApiError(res)
       }
       return res.json()
     },
@@ -182,8 +176,7 @@ export function useDeleteComment(postId: string) {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to delete comment')
+        await handleApiError(res)
       }
       return res.json()
     },
