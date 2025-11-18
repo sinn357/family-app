@@ -1,16 +1,24 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query'
 import type { CreateTodoInput, UpdateTodoInput } from '@/lib/validations/todo'
 import { handleApiError } from '@/lib/utils/error'
 
 /**
- * Get all todos with optional filter
+ * Get todos with infinite scroll pagination and optional filter
  */
 export function useTodos(filter?: 'all' | 'assignedToMe' | 'createdByMe') {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['todos', filter],
-    queryFn: async () => {
-      const params = filter && filter !== 'all' ? `?filter=${filter}` : ''
-      const res = await fetch(`/api/todos${params}`, {
+    queryFn: async ({ pageParam }: { pageParam?: string }) => {
+      const url = new URL('/api/todos', window.location.origin)
+      if (pageParam) {
+        url.searchParams.set('cursor', pageParam)
+      }
+      if (filter && filter !== 'all') {
+        url.searchParams.set('filter', filter)
+      }
+      url.searchParams.set('limit', '20')
+
+      const res = await fetch(url.toString(), {
         credentials: 'include',
       })
       if (!res.ok) {
@@ -18,6 +26,8 @@ export function useTodos(filter?: 'all' | 'assignedToMe' | 'createdByMe') {
       }
       return res.json()
     },
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    initialPageParam: undefined,
   })
 }
 
@@ -98,14 +108,17 @@ export function useToggleTodo() {
       // Snapshot the previous value
       const previousTodos = queryClient.getQueriesData({ queryKey: ['todos'] })
 
-      // Optimistically update all todo queries
+      // Optimistically update all todo queries (now using pages structure)
       queryClient.setQueriesData<any>({ queryKey: ['todos'] }, (old: any) => {
-        if (!old?.todos) return old
+        if (!old?.pages) return old
         return {
           ...old,
-          todos: old.todos.map((todo: any) =>
-            todo.id === todoId ? { ...todo, isDone } : todo
-          ),
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            todos: page.todos.map((todo: any) =>
+              todo.id === todoId ? { ...todo, isDone } : todo
+            ),
+          })),
         }
       })
 
@@ -152,12 +165,15 @@ export function useDeleteTodo() {
       // Snapshot the previous value
       const previousTodos = queryClient.getQueriesData({ queryKey: ['todos'] })
 
-      // Optimistically remove the todo
+      // Optimistically remove the todo (now using pages structure)
       queryClient.setQueriesData<any>({ queryKey: ['todos'] }, (old: any) => {
-        if (!old?.todos) return old
+        if (!old?.pages) return old
         return {
           ...old,
-          todos: old.todos.filter((todo: any) => todo.id !== todoId),
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            todos: page.todos.filter((todo: any) => todo.id !== todoId),
+          })),
         }
       })
 

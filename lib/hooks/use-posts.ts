@@ -1,15 +1,21 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query'
 import type { CreatePostInput, UpdatePostInput, CreateCommentInput, UpdateCommentInput } from '@/lib/validations/post'
 import { handleApiError } from '@/lib/utils/error'
 
 /**
- * Get all posts
+ * Get posts with infinite scroll pagination
  */
 export function usePosts() {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['posts'],
-    queryFn: async () => {
-      const res = await fetch('/api/posts', {
+    queryFn: async ({ pageParam }: { pageParam?: string }) => {
+      const url = new URL('/api/posts', window.location.origin)
+      if (pageParam) {
+        url.searchParams.set('cursor', pageParam)
+      }
+      url.searchParams.set('limit', '10')
+
+      const res = await fetch(url.toString(), {
         credentials: 'include',
       })
       if (!res.ok) {
@@ -17,6 +23,8 @@ export function usePosts() {
       }
       return res.json()
     },
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    initialPageParam: undefined,
   })
 }
 

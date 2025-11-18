@@ -4,7 +4,8 @@ import { useTodos } from '@/lib/hooks/use-todos'
 import { TodoItem } from './todo-item'
 import { EmptyState } from '@/components/ui/empty-state'
 import { TodoListSkeleton } from './todo-skeleton'
-import { CheckSquare } from 'lucide-react'
+import { CheckSquare, Loader2 } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 
 interface TodoListProps {
   filter: 'all' | 'assignedToMe' | 'createdByMe'
@@ -12,7 +13,41 @@ interface TodoListProps {
 }
 
 export function TodoList({ filter, currentUserId }: TodoListProps) {
-  const { data, isLoading, error } = useTodos(filter)
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useTodos(filter)
+
+  // Intersection Observer for infinite scroll
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    const currentRef = loadMoreRef.current
+    if (currentRef) {
+      observer.observe(currentRef)
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef)
+      }
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   if (isLoading) {
     return <TodoListSkeleton />
@@ -26,7 +61,8 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
     )
   }
 
-  const todos = data?.todos || []
+  // Flatten all pages into a single array of todos
+  const todos = data?.pages.flatMap((page) => page.todos) || []
 
   if (todos.length === 0) {
     const getEmptyMessage = () => {
@@ -65,6 +101,30 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
       {todos.map((todo: any) => (
         <TodoItem key={todo.id} todo={todo} currentUserId={currentUserId} />
       ))}
+
+      {/* Loading indicator for next page */}
+      {hasNextPage && (
+        <div
+          ref={loadMoreRef}
+          className="flex items-center justify-center py-6"
+        >
+          {isFetchingNextPage && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>Loading more todos...</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* End of list indicator */}
+      {!hasNextPage && todos.length > 0 && (
+        <div className="flex items-center justify-center py-6">
+          <p className="text-sm text-muted-foreground">
+            You've reached the end of the todos
+          </p>
+        </div>
+      )}
     </div>
   )
 }

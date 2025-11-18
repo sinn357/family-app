@@ -6,13 +6,27 @@ import { z } from 'zod'
 
 /**
  * GET /api/posts
- * Get all posts with author and comment count
+ * Get posts with cursor-based pagination
+ * Query params:
+ *  - cursor: ISO date string of last post (optional)
+ *  - limit: number of posts to fetch (default: 10)
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     await requireAuth()
 
+    const { searchParams } = new URL(request.url)
+    const cursor = searchParams.get('cursor')
+    const limit = parseInt(searchParams.get('limit') || '10', 10)
+
     const posts = await prisma.post.findMany({
+      take: limit + 1, // Fetch one extra to check if there are more
+      ...(cursor && {
+        cursor: {
+          createdAt: new Date(cursor),
+        },
+        skip: 1, // Skip the cursor itself
+      }),
       include: {
         author: {
           select: {
@@ -31,7 +45,13 @@ export async function GET() {
       },
     })
 
-    return NextResponse.json({ posts })
+    let nextCursor: string | undefined = undefined
+    if (posts.length > limit) {
+      const nextPost = posts.pop() // Remove the extra post
+      nextCursor = nextPost!.createdAt.toISOString()
+    }
+
+    return NextResponse.json({ posts, nextCursor })
   } catch (error) {
     if (error instanceof Error && error.message === 'Authentication required') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
