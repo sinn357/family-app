@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert } from '@/components/ui/alert'
+import { toast } from 'sonner'
 
 interface CommentFormProps {
   postId: string
@@ -35,9 +36,12 @@ export function CommentForm({ postId }: CommentFormProps) {
     try {
       setError(null)
       await createComment.mutateAsync(data)
+      toast.success('Comment added successfully!')
       form.reset()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add comment')
+      const message = err instanceof Error ? err.message : 'Failed to add comment'
+      setError(message)
+      toast.error(message)
     }
   }
 

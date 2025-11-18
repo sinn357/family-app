@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import { createPostSchema, type CreatePostInput } from '@/lib/validations/post'
 import { useCreatePost } from '@/lib/hooks/use-posts'
 import { Button } from '@/components/ui/button'
@@ -36,9 +37,12 @@ export function PostForm() {
     try {
       setError(null)
       const result = await createPost.mutateAsync(data)
+      toast.success('Post created successfully!')
       router.push(`/board/${result.post.id}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create post')
+      const message = err instanceof Error ? err.message : 'Failed to create post'
+      setError(message)
+      toast.error(message)
     }
   }
 

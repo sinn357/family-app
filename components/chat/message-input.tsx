@@ -7,6 +7,7 @@ import { sendMessageSchema, type SendMessageInput } from '@/lib/validations/chat
 import { useSendMessage } from '@/lib/hooks/use-chat'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { toast } from 'sonner'
 
 interface MessageInputProps {
   roomId: string
@@ -29,7 +30,9 @@ export function MessageInput({ roomId }: MessageInputProps) {
       await sendMessage.mutateAsync(data)
       form.reset()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send message')
+      const message = err instanceof Error ? err.message : 'Failed to send message'
+      setError(message)
+      toast.error(message)
     }
   }
 

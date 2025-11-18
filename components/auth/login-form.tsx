@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Alert } from '@/components/ui/alert'
+import { toast } from 'sonner'
 
 export function LoginForm() {
   const router = useRouter()
@@ -45,15 +46,20 @@ export function LoginForm() {
       const result = await res.json()
 
       if (!res.ok) {
-        setError(result.error || 'Login failed')
+        const message = result.error || 'Login failed'
+        setError(message)
+        toast.error(message)
         return
       }
 
       // Login successful - redirect to home
+      toast.success('Login successful!')
       router.push('/home')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      setError(message)
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }

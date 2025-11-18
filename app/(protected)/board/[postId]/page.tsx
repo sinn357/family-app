@@ -8,6 +8,7 @@ import { CommentForm } from '@/components/posts/comment-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 
 export default function PostDetailPage({ params }: { params: Promise<{ postId: string }> }) {
   const resolvedParams = use(params)
@@ -42,10 +43,12 @@ export default function PostDetailPage({ params }: { params: Promise<{ postId: s
 
     try {
       await deletePost.mutateAsync(postId)
+      toast.success('Post deleted successfully!')
       router.push('/board')
     } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to delete post'
       console.error('Failed to delete post:', err)
-      alert('Failed to delete post')
+      toast.error(message)
     }
   }
 

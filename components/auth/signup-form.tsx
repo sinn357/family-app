@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Alert } from '@/components/ui/alert'
+import { toast } from 'sonner'
 
 export function SignupForm() {
   const router = useRouter()
@@ -46,15 +47,20 @@ export function SignupForm() {
       const result = await res.json()
 
       if (!res.ok) {
-        setError(result.error || 'Signup failed')
+        const message = result.error || 'Signup failed'
+        setError(message)
+        toast.error(message)
         return
       }
 
       // Signup successful - redirect to home
+      toast.success('Account created successfully!')
       router.push('/home')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      setError(message)
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }

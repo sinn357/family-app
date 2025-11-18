@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { toast } from 'sonner'
 
 interface TodoItemProps {
   todo: {
@@ -39,8 +40,10 @@ export function TodoItem({ todo, currentUserId }: TodoItemProps) {
         todoId: todo.id,
         isDone: !todo.isDone,
       })
+      toast.success(todo.isDone ? 'Todo marked as incomplete' : 'Todo completed!')
     } catch (err) {
       console.error('Failed to toggle todo:', err)
+      toast.error('Failed to update todo')
     }
   }
 
@@ -52,9 +55,11 @@ export function TodoItem({ todo, currentUserId }: TodoItemProps) {
     try {
       setIsDeleting(true)
       await deleteTodo.mutateAsync(todo.id)
+      toast.success('Todo deleted successfully!')
     } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to delete todo. Only the creator can delete.'
       console.error('Failed to delete todo:', err)
-      alert('Failed to delete todo. Only the creator can delete.')
+      toast.error(message)
       setIsDeleting(false)
     }
   }
