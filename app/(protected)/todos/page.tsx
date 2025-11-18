@@ -54,7 +54,7 @@ export default function TodosPage() {
         </Dialog>
       </div>
 
-      <Card className="mb-6 border-l-4 border-l-accent/20">
+      <Card className="mb-6 border-l-4 border-l-accent/30">
         <CardHeader>
           <CardTitle className="text-lg text-primary">Filter Todos</CardTitle>
         </CardHeader>

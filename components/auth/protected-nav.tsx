@@ -43,7 +43,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
   ]
 
   return (
-    <nav className="bg-white border-b border-border sticky top-0 z-50 shadow-sm">
+    <nav className="bg-card border-b border-border sticky top-0 z-50 shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo and Desktop Navigation */}
@@ -61,7 +61,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-foreground/70 hover:text-foreground hover:bg-accent/10 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  className="text-foreground/80 hover:text-primary hover:bg-primary/5 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -71,10 +71,10 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
 
           {/* Desktop User Info & Logout */}
           <div className="hidden md:flex items-center space-x-4">
-            <span className="text-sm text-foreground/70">
+            <span className="text-sm text-foreground/80">
               {member.name}
               {member.role === 'ADMIN' && (
-                <span className="ml-2 text-xs bg-accent/20 text-accent px-2 py-1 rounded-full font-medium">
+                <span className="ml-2 text-xs bg-primary/15 text-primary px-2 py-1 rounded-full font-medium">
                   Admin
                 </span>
               )}
@@ -84,7 +84,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
               size="sm"
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className="border-primary/20 hover:bg-primary hover:text-primary-foreground"
+              className="border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground"
             >
               {isLoggingOut ? 'Logging out...' : 'Logout'}
             </Button>
@@ -93,7 +93,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-md text-foreground/70 hover:text-foreground hover:bg-accent/10 transition-colors"
+            className="md:hidden p-2 rounded-md text-foreground/80 hover:text-primary hover:bg-primary/5 transition-colors"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
@@ -113,7 +113,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-foreground/70 hover:text-foreground hover:bg-accent/10 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  className="text-foreground/80 hover:text-primary hover:bg-primary/5 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -121,10 +121,10 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
             </div>
 
             <div className="mt-4 pt-4 border-t border-border flex flex-col space-y-3">
-              <div className="px-3 text-sm text-foreground/70">
+              <div className="px-3 text-sm text-foreground/80">
                 {member.name}
                 {member.role === 'ADMIN' && (
-                  <span className="ml-2 text-xs bg-accent/20 text-accent px-2 py-1 rounded-full font-medium">
+                  <span className="ml-2 text-xs bg-primary/15 text-primary px-2 py-1 rounded-full font-medium">
                     Admin
                   </span>
                 )}
@@ -134,7 +134,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
                 size="sm"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="border-primary/20 hover:bg-primary hover:text-primary-foreground w-full"
+                className="border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground w-full"
               >
                 {isLoggingOut ? 'Logging out...' : 'Logout'}
               </Button>

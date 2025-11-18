@@ -26,7 +26,7 @@ export default async function SignupPage() {
           <SignupForm />
           <div className="text-center text-sm text-muted-foreground">
             Already have an account?{' '}
-            <Link href="/login" className="text-accent hover:text-accent/80 font-medium transition-colors">
+            <Link href="/login" className="text-primary hover:text-primary/80 font-medium transition-colors">
               Login
             </Link>
           </div>

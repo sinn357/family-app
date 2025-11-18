@@ -16,7 +16,7 @@ export default async function HomePage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-primary/20">
+        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-primary/30">
           <CardHeader>
             <CardTitle className="text-primary">Chat</CardTitle>
             <CardDescription>
@@ -26,14 +26,14 @@ export default async function HomePage() {
           <CardContent>
             <a
               href="/chat"
-              className="text-accent hover:text-accent/80 font-medium transition-colors inline-flex items-center gap-1"
+              className="text-primary hover:text-primary/80 font-medium transition-colors inline-flex items-center gap-1"
             >
               Go to Chat →
             </a>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-accent/20">
+        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-accent/30">
           <CardHeader>
             <CardTitle className="text-primary">Family Board</CardTitle>
             <CardDescription>
@@ -43,14 +43,14 @@ export default async function HomePage() {
           <CardContent>
             <a
               href="/board"
-              className="text-accent hover:text-accent/80 font-medium transition-colors inline-flex items-center gap-1"
+              className="text-primary hover:text-primary/80 font-medium transition-colors inline-flex items-center gap-1"
             >
               Go to Board →
             </a>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-primary/20">
+        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-primary/30">
           <CardHeader>
             <CardTitle className="text-primary">Checklist</CardTitle>
             <CardDescription>
@@ -60,7 +60,7 @@ export default async function HomePage() {
           <CardContent>
             <a
               href="/todos"
-              className="text-accent hover:text-accent/80 font-medium transition-colors inline-flex items-center gap-1"
+              className="text-primary hover:text-primary/80 font-medium transition-colors inline-flex items-center gap-1"
             >
               Go to Todos →
             </a>
@@ -68,7 +68,7 @@ export default async function HomePage() {
         </Card>
 
         {member?.role === 'ADMIN' && (
-          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-accent/20">
+          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-accent/30">
             <CardHeader>
               <CardTitle className="text-primary">Admin Dashboard</CardTitle>
               <CardDescription>
@@ -78,7 +78,7 @@ export default async function HomePage() {
             <CardContent>
               <a
                 href="/admin"
-                className="text-accent hover:text-accent/80 font-medium transition-colors inline-flex items-center gap-1"
+                className="text-primary hover:text-primary/80 font-medium transition-colors inline-flex items-center gap-1"
               >
                 Go to Admin →
               </a>

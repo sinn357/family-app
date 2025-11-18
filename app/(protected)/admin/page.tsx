@@ -36,7 +36,7 @@ export default async function AdminPage() {
         </Dialog>
       </div>
 
-      <Card className="mb-8 border-l-4 border-l-primary/20">
+      <Card className="mb-8 border-l-4 border-l-primary/30">
         <CardHeader>
           <CardTitle className="text-primary">Family Members</CardTitle>
         </CardHeader>
@@ -45,7 +45,7 @@ export default async function AdminPage() {
         </CardContent>
       </Card>
 
-      <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
         <h2 className="font-semibold text-primary mb-2">Admin Features</h2>
         <ul className="text-sm text-foreground/70 space-y-1">
           <li>• Create new family members with custom roles</li>
