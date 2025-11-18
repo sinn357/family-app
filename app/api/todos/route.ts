@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       take: limit + 1, // Fetch one extra to check if there are more
       ...(cursor && {
         cursor: {
-          createdAt: new Date(cursor),
+          id: cursor,
         },
         skip: 1, // Skip the cursor itself
       }),
