@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react'
 import { useChatMessages } from '@/lib/hooks/use-chat'
 import { MessageItem } from './message-item'
+import { EmptyState } from '@/components/ui/empty-state'
+import { MessageCircle } from 'lucide-react'
 
 interface MessageListProps {
   roomId: string
@@ -22,7 +24,7 @@ export function MessageList({ roomId, currentUserId }: MessageListProps) {
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-gray-500">Loading messages...</p>
+        <p className="text-muted-foreground">Loading messages...</p>
       </div>
     )
   }
@@ -30,7 +32,7 @@ export function MessageList({ roomId, currentUserId }: MessageListProps) {
   if (error) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-red-500">
+        <p className="text-destructive">
           Error loading messages: {error.message}
         </p>
       </div>
@@ -42,9 +44,11 @@ export function MessageList({ roomId, currentUserId }: MessageListProps) {
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-gray-500">
-          No messages yet. Start the conversation!
-        </p>
+        <EmptyState
+          icon={MessageCircle}
+          title="No messages yet"
+          description="Start the conversation by sending the first message to your family!"
+        />
       </div>
     )
   }
