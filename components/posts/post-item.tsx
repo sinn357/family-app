@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { memo, useMemo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -8,6 +9,7 @@ interface PostItemProps {
     id: string
     title: string
     content: string
+    imageUrl?: string | null
     createdAt: string
     author: {
       id: string
@@ -53,6 +55,16 @@ function PostItemComponent({ post }: PostItemProps) {
           </div>
         </CardHeader>
         <CardContent>
+          {post.imageUrl && (
+            <div className="relative w-full h-64 mb-4 rounded-lg overflow-hidden">
+              <Image
+                src={post.imageUrl}
+                alt={post.title}
+                fill
+                className="object-cover"
+              />
+            </div>
+          )}
           <p className="text-gray-600 whitespace-pre-wrap">{excerpt}</p>
         </CardContent>
       </Card>

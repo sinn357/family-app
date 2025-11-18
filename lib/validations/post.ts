@@ -6,6 +6,7 @@ import { z } from 'zod'
 export const createPostSchema = z.object({
   title: z.string().min(1, 'Title is required').max(300),
   content: z.string().min(1, 'Content is required'),
+  imageUrl: z.string().url().optional().nullable(),
 })
 
 export type CreatePostInput = z.infer<typeof createPostSchema>
@@ -16,6 +17,7 @@ export type CreatePostInput = z.infer<typeof createPostSchema>
 export const updatePostSchema = z.object({
   title: z.string().min(1).max(300).optional(),
   content: z.string().min(1).optional(),
+  imageUrl: z.string().url().optional().nullable(),
 })
 
 export type UpdatePostInput = z.infer<typeof updatePostSchema>
@@ -25,6 +27,7 @@ export type UpdatePostInput = z.infer<typeof updatePostSchema>
  */
 export const createCommentSchema = z.object({
   content: z.string().min(1, 'Comment cannot be empty'),
+  imageUrl: z.string().url().optional().nullable(),
 })
 
 export type CreateCommentInput = z.infer<typeof createCommentSchema>
@@ -34,6 +37,7 @@ export type CreateCommentInput = z.infer<typeof createCommentSchema>
  */
 export const updateCommentSchema = z.object({
   content: z.string().min(1, 'Comment cannot be empty'),
+  imageUrl: z.string().url().optional().nullable(),
 })
 
 export type UpdateCommentInput = z.infer<typeof updateCommentSchema>

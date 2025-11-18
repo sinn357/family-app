@@ -82,6 +82,7 @@ export async function POST(request: NextRequest) {
       data: {
         title: validated.title,
         content: validated.content,
+        imageUrl: validated.imageUrl || null,
         authorId: member.id,
       },
       include: {

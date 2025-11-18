@@ -2,6 +2,7 @@
 
 import { use } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { usePost, useDeletePost, useUpdatePost } from '@/lib/hooks/use-posts'
 import { CommentList } from '@/components/posts/comment-list'
 import { CommentForm } from '@/components/posts/comment-form'
@@ -209,6 +210,16 @@ export default function PostDetailPage({ params }: { params: Promise<{ postId: s
           </div>
         </CardHeader>
         <CardContent>
+          {post.imageUrl && !isEditing && (
+            <div className="relative w-full h-96 mb-6 rounded-lg overflow-hidden">
+              <Image
+                src={post.imageUrl}
+                alt={post.title}
+                fill
+                className="object-cover"
+              />
+            </div>
+          )}
           {isEditing ? (
             <Textarea
               value={editContent}

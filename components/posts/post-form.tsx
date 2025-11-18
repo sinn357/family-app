@@ -19,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert } from '@/components/ui/alert'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export function PostForm() {
   const router = useRouter()
@@ -30,6 +31,7 @@ export function PostForm() {
     defaultValues: {
       title: '',
       content: '',
+      imageUrl: null,
     },
   })
 
@@ -85,6 +87,24 @@ export function PostForm() {
                   rows={10}
                   disabled={createPost.isPending}
                   {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Image (Optional)</FormLabel>
+              <FormControl>
+                <ImageUpload
+                  value={field.value || undefined}
+                  onChange={field.onChange}
+                  disabled={createPost.isPending}
                 />
               </FormControl>
               <FormMessage />
