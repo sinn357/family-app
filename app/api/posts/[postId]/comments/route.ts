@@ -36,6 +36,7 @@ export async function POST(
         postId,
         authorId: member.id,
         content: validated.content,
+        imageUrl: validated.imageUrl || null,
       },
       include: {
         author: {

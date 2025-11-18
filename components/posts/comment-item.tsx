@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback, memo } from 'react'
+import Image from 'next/image'
 import { useUpdateComment, useDeleteComment } from '@/lib/hooks/use-posts'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,6 +12,7 @@ interface CommentItemProps {
   comment: {
     id: string
     content: string
+    imageUrl?: string | null
     createdAt: string
     author: {
       id: string
@@ -144,7 +146,19 @@ function CommentItemComponent({ comment, postId, currentUserId }: CommentItemPro
           </div>
         </div>
       ) : (
-        <p className="text-gray-700 whitespace-pre-wrap">{comment.content}</p>
+        <>
+          {comment.imageUrl && (
+            <div className="relative w-full h-48 mb-3 rounded-lg overflow-hidden">
+              <Image
+                src={comment.imageUrl}
+                alt="Comment attachment"
+                fill
+                className="object-cover"
+              />
+            </div>
+          )}
+          <p className="text-gray-700 whitespace-pre-wrap">{comment.content}</p>
+        </>
       )}
     </div>
   )

@@ -11,10 +11,12 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert } from '@/components/ui/alert'
+import { ImageUpload } from '@/components/ui/image-upload'
 import { toast } from 'sonner'
 
 interface CommentFormProps {
@@ -29,6 +31,7 @@ export function CommentForm({ postId }: CommentFormProps) {
     resolver: zodResolver(createCommentSchema),
     defaultValues: {
       content: '',
+      imageUrl: null,
     },
   })
 
@@ -65,6 +68,24 @@ export function CommentForm({ postId }: CommentFormProps) {
                   rows={3}
                   disabled={createComment.isPending}
                   {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Image (Optional)</FormLabel>
+              <FormControl>
+                <ImageUpload
+                  value={field.value || undefined}
+                  onChange={field.onChange}
+                  disabled={createComment.isPending}
                 />
               </FormControl>
               <FormMessage />
