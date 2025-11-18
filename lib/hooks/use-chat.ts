@@ -21,7 +21,7 @@ export function useChatRooms() {
 }
 
 /**
- * Get messages from a chat room with polling
+ * Get messages from a chat room (real-time via WebSocket)
  */
 export function useChatMessages(roomId: string) {
   return useQuery({
@@ -37,7 +37,7 @@ export function useChatMessages(roomId: string) {
       return res.json()
     },
     enabled: !!roomId,
-    refetchInterval: 3000, // Poll every 3 seconds
+    // Removed polling - using WebSocket for real-time updates
   })
 }
 
@@ -45,8 +45,6 @@ export function useChatMessages(roomId: string) {
  * Send a message to a chat room
  */
 export function useSendMessage(roomId: string) {
-  const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async (data: SendMessageInput) => {
       const res = await fetch(`/api/chat/rooms/${roomId}/messages`, {
@@ -61,9 +59,6 @@ export function useSendMessage(roomId: string) {
       }
       return res.json()
     },
-    onSuccess: () => {
-      // Invalidate messages query to refetch
-      queryClient.invalidateQueries({ queryKey: ['chat', roomId, 'messages'] })
-    },
+    // No need to invalidate - WebSocket will update in real-time
   })
 }

@@ -7,6 +7,14 @@ import { sendMessageSchema, type SendMessageInput } from '@/lib/validations/chat
 import { useSendMessage } from '@/lib/hooks/use-chat'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { ImageUpload } from '@/components/ui/image-upload'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from '@/components/ui/form'
 import { toast } from 'sonner'
 
 interface MessageInputProps {
@@ -21,6 +29,7 @@ export function MessageInput({ roomId }: MessageInputProps) {
     resolver: zodResolver(sendMessageSchema),
     defaultValues: {
       content: '',
+      imageUrl: null,
     },
   })
 
@@ -45,34 +54,70 @@ export function MessageInput({ roomId }: MessageInputProps) {
   }
 
   return (
-    <div className="border-t border-gray-200 p-4 bg-white">
+    <div className="border-t border-gray-200 p-3 md:p-4 bg-white">
       {error && (
         <div className="mb-2 text-sm text-red-600 bg-red-50 p-2 rounded">
           {error}
         </div>
       )}
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
-        <Textarea
-          placeholder="Type a message... (Press Enter to send, Shift+Enter for new line)"
-          className="flex-1 resize-none"
-          rows={2}
-          disabled={sendMessage.isPending}
-          onKeyDown={handleKeyDown}
-          {...form.register('content')}
-        />
-        <Button
-          type="submit"
-          disabled={sendMessage.isPending || !form.watch('content')?.trim()}
-          className="self-end"
-        >
-          {sendMessage.isPending ? 'Sending...' : 'Send'}
-        </Button>
-      </form>
-      {form.formState.errors.content && (
-        <p className="text-sm text-red-600 mt-1">
-          {form.formState.errors.content.message}
-        </p>
-      )}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 md:space-y-3">
+          {/* Image Upload */}
+          <FormField
+            control={form.control}
+            name="imageUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xs text-gray-600">
+                  Attach Image (Optional)
+                </FormLabel>
+                <FormControl>
+                  <ImageUpload
+                    value={field.value || undefined}
+                    onChange={field.onChange}
+                    disabled={sendMessage.isPending}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          {/* Message Input and Send Button */}
+          <div className="flex gap-2">
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormControl>
+                    <Textarea
+                      placeholder="Type a message..."
+                      className="resize-none text-sm md:text-base"
+                      rows={2}
+                      disabled={sendMessage.isPending}
+                      onKeyDown={handleKeyDown}
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button
+              type="submit"
+              disabled={sendMessage.isPending || !form.watch('content')?.trim()}
+              className="self-end px-3 md:px-4"
+            >
+              {sendMessage.isPending ? 'Sending...' : 'Send'}
+            </Button>
+          </div>
+
+          {form.formState.errors.content && (
+            <p className="text-sm text-red-600">
+              {form.formState.errors.content.message}
+            </p>
+          )}
+        </form>
+      </Form>
     </div>
   )
 }

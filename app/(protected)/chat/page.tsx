@@ -60,7 +60,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-4 px-2 md:py-8 md:px-4">
       <ChatRoom
         roomId={defaultRoom.id}
         roomName={defaultRoom.name}

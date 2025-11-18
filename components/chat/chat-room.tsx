@@ -12,9 +12,9 @@ interface ChatRoomProps {
 
 export function ChatRoom({ roomId, roomName, currentUserId }: ChatRoomProps) {
   return (
-    <Card className="flex flex-col h-[calc(100vh-12rem)]">
-      <CardHeader className="border-b">
-        <CardTitle>{roomName}</CardTitle>
+    <Card className="flex flex-col h-[calc(100vh-12rem)] md:h-[calc(100vh-12rem)] max-h-screen">
+      <CardHeader className="border-b px-4 py-3 md:px-6 md:py-4">
+        <CardTitle className="text-lg md:text-xl">{roomName}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
         <MessageList roomId={roomId} currentUserId={currentUserId} />

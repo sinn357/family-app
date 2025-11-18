@@ -69,6 +69,7 @@ export async function POST(
         roomId,
         senderId: member.id,
         content: validated.content,
+        imageUrl: validated.imageUrl || null,
       },
       include: {
         sender: {
@@ -79,6 +80,17 @@ export async function POST(
         },
       },
     })
+
+    // Emit Socket.IO event for real-time delivery
+    try {
+      const io = (global as any).io
+      if (io) {
+        io.to(roomId).emit('new-message', message)
+      }
+    } catch (socketError) {
+      console.error('Socket.IO emission error:', socketError)
+      // Don't fail the request if socket emission fails
+    }
 
     return NextResponse.json({ message }, { status: 201 })
   } catch (error) {
