@@ -50,7 +50,7 @@ export function LoginForm() {
       }
 
       // Login successful - redirect to home
-      router.push('/')
+      router.push('/home')
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')

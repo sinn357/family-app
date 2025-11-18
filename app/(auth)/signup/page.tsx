@@ -8,7 +8,7 @@ export default async function SignupPage() {
   // If already logged in, redirect to home
   const member = await getCurrentMember()
   if (member) {
-    redirect('/')
+    redirect('/home')
   }
 
   return (
