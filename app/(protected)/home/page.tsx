@@ -7,18 +7,18 @@ export default async function HomePage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-primary">
           Welcome, {member?.name}!
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-muted-foreground mt-2">
           Family collaboration platform for your family
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-primary/20">
           <CardHeader>
-            <CardTitle>Chat</CardTitle>
+            <CardTitle className="text-primary">Chat</CardTitle>
             <CardDescription>
               Real-time messaging with family members
             </CardDescription>
@@ -26,16 +26,16 @@ export default async function HomePage() {
           <CardContent>
             <a
               href="/chat"
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-accent hover:text-accent/80 font-medium transition-colors inline-flex items-center gap-1"
             >
               Go to Chat →
             </a>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-accent/20">
           <CardHeader>
-            <CardTitle>Family Board</CardTitle>
+            <CardTitle className="text-primary">Family Board</CardTitle>
             <CardDescription>
               Share posts and updates with the family
             </CardDescription>
@@ -43,16 +43,16 @@ export default async function HomePage() {
           <CardContent>
             <a
               href="/board"
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-accent hover:text-accent/80 font-medium transition-colors inline-flex items-center gap-1"
             >
               Go to Board →
             </a>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-primary/20">
           <CardHeader>
-            <CardTitle>Checklist</CardTitle>
+            <CardTitle className="text-primary">Checklist</CardTitle>
             <CardDescription>
               Manage family tasks and todos
             </CardDescription>
@@ -60,7 +60,7 @@ export default async function HomePage() {
           <CardContent>
             <a
               href="/todos"
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-accent hover:text-accent/80 font-medium transition-colors inline-flex items-center gap-1"
             >
               Go to Todos →
             </a>
@@ -68,9 +68,9 @@ export default async function HomePage() {
         </Card>
 
         {member?.role === 'ADMIN' && (
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-accent/20">
             <CardHeader>
-              <CardTitle>Admin Dashboard</CardTitle>
+              <CardTitle className="text-primary">Admin Dashboard</CardTitle>
               <CardDescription>
                 Manage family members
               </CardDescription>
@@ -78,7 +78,7 @@ export default async function HomePage() {
             <CardContent>
               <a
                 href="/admin"
-                className="text-blue-600 hover:text-blue-800 font-medium"
+                className="text-accent hover:text-accent/80 font-medium transition-colors inline-flex items-center gap-1"
               >
                 Go to Admin →
               </a>

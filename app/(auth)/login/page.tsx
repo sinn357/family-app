@@ -12,10 +12,10 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
-      <Card className="w-full max-w-md">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5 px-4 py-12">
+      <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold text-center text-primary">
             Family App
           </CardTitle>
           <CardDescription className="text-center">
@@ -24,9 +24,9 @@ export default async function LoginPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <LoginForm />
-          <div className="text-center text-sm text-gray-600">
+          <div className="text-center text-sm text-muted-foreground">
             Don't have an account?{' '}
-            <Link href="/signup" className="text-blue-600 hover:text-blue-800 font-medium">
+            <Link href="/signup" className="text-accent hover:text-accent/80 font-medium transition-colors">
               Sign up
             </Link>
           </div>

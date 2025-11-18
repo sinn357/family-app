@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Menu, X } from 'lucide-react'
 
 interface ProtectedNavProps {
   member: {
@@ -16,6 +17,7 @@ interface ProtectedNavProps {
 export function ProtectedNav({ member }: ProtectedNavProps) {
   const router = useRouter()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   async function handleLogout() {
     try {
@@ -32,55 +34,47 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
     }
   }
 
+  const navLinks = [
+    { href: '/home', label: 'Home' },
+    { href: '/chat', label: 'Chat' },
+    { href: '/board', label: 'Board' },
+    { href: '/todos', label: 'Todos' },
+    ...(member.role === 'ADMIN' ? [{ href: '/admin', label: 'Admin' }] : []),
+  ]
+
   return (
-    <nav className="bg-white border-b border-gray-200">
+    <nav className="bg-white border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
+          {/* Logo and Desktop Navigation */}
           <div className="flex items-center space-x-8">
-            <Link href="/home" className="text-xl font-bold text-gray-900">
+            <Link
+              href="/home"
+              className="text-xl font-bold text-primary hover:text-primary/80 transition-colors"
+            >
               Family App
             </Link>
-            <div className="hidden md:flex space-x-4">
-              <Link
-                href="/home"
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Home
-              </Link>
-              <Link
-                href="/chat"
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Chat
-              </Link>
-              <Link
-                href="/board"
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Board
-              </Link>
-              <Link
-                href="/todos"
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Todos
-              </Link>
-              {member.role === 'ADMIN' && (
+
+            {/* Desktop Menu */}
+            <div className="hidden md:flex space-x-1">
+              {navLinks.map((link) => (
                 <Link
-                  href="/admin"
-                  className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  key={link.href}
+                  href={link.href}
+                  className="text-foreground/70 hover:text-foreground hover:bg-accent/10 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
-                  Admin
+                  {link.label}
                 </Link>
-              )}
+              ))}
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-700">
+          {/* Desktop User Info & Logout */}
+          <div className="hidden md:flex items-center space-x-4">
+            <span className="text-sm text-foreground/70">
               {member.name}
               {member.role === 'ADMIN' && (
-                <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                <span className="ml-2 text-xs bg-accent/20 text-accent px-2 py-1 rounded-full font-medium">
                   Admin
                 </span>
               )}
@@ -90,11 +84,63 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
               size="sm"
               onClick={handleLogout}
               disabled={isLoggingOut}
+              className="border-primary/20 hover:bg-primary hover:text-primary-foreground"
             >
               {isLoggingOut ? 'Logging out...' : 'Logout'}
             </Button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 rounded-md text-foreground/70 hover:text-foreground hover:bg-accent/10 transition-colors"
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
         </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden pb-4 border-t border-border mt-2 pt-4">
+            <div className="flex flex-col space-y-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-foreground/70 hover:text-foreground hover:bg-accent/10 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-border flex flex-col space-y-3">
+              <div className="px-3 text-sm text-foreground/70">
+                {member.name}
+                {member.role === 'ADMIN' && (
+                  <span className="ml-2 text-xs bg-accent/20 text-accent px-2 py-1 rounded-full font-medium">
+                    Admin
+                  </span>
+                )}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="border-primary/20 hover:bg-primary hover:text-primary-foreground w-full"
+              >
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   )

@@ -22,32 +22,32 @@ export default async function AdminPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+        <h1 className="text-3xl font-bold text-primary">Admin Dashboard</h1>
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Create Member</Button>
+            <Button className="bg-primary hover:bg-primary/90">Create Member</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Create New Member</DialogTitle>
+              <DialogTitle className="text-primary">Create New Member</DialogTitle>
             </DialogHeader>
             <MemberForm />
           </DialogContent>
         </Dialog>
       </div>
 
-      <Card className="mb-8">
+      <Card className="mb-8 border-l-4 border-l-primary/20">
         <CardHeader>
-          <CardTitle>Family Members</CardTitle>
+          <CardTitle className="text-primary">Family Members</CardTitle>
         </CardHeader>
         <CardContent>
           <MemberList />
         </CardContent>
       </Card>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h2 className="font-semibold text-blue-900 mb-2">Admin Features</h2>
-        <ul className="text-sm text-blue-800 space-y-1">
+      <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+        <h2 className="font-semibold text-primary mb-2">Admin Features</h2>
+        <ul className="text-sm text-foreground/70 space-y-1">
           <li>• Create new family members with custom roles</li>
           <li>• Edit member names and passwords</li>
           <li>• View member creation dates</li>

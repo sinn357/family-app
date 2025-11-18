@@ -40,23 +40,23 @@ export default function TodosPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Family Checklist</h1>
+        <h1 className="text-3xl font-bold text-primary">Family Checklist</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button>Create Todo</Button>
+            <Button className="bg-primary hover:bg-primary/90">Create Todo</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Create New Todo</DialogTitle>
+              <DialogTitle className="text-primary">Create New Todo</DialogTitle>
             </DialogHeader>
             <TodoForm onSuccess={() => setIsDialogOpen(false)} />
           </DialogContent>
         </Dialog>
       </div>
 
-      <Card className="mb-6">
+      <Card className="mb-6 border-l-4 border-l-accent/20">
         <CardHeader>
-          <CardTitle className="text-lg">Filter Todos</CardTitle>
+          <CardTitle className="text-lg text-primary">Filter Todos</CardTitle>
         </CardHeader>
         <CardContent>
           <TodoFilters currentFilter={filter} onFilterChange={setFilter} />

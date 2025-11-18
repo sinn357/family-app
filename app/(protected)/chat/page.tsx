@@ -30,7 +30,7 @@ export default function ChatPage() {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
-          <p className="text-gray-500">Loading chat...</p>
+          <p className="text-muted-foreground">Loading chat...</p>
         </div>
       </div>
     )
@@ -40,7 +40,7 @@ export default function ChatPage() {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
-          <p className="text-red-500">Error loading chat: {error.message}</p>
+          <p className="text-destructive">Error loading chat: {error.message}</p>
         </div>
       </div>
     )
@@ -53,7 +53,7 @@ export default function ChatPage() {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
-          <p className="text-gray-500">No chat rooms available</p>
+          <p className="text-muted-foreground">No chat rooms available</p>
         </div>
       </div>
     )
