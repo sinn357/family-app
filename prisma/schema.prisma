@@ -1,0 +1,227 @@
+// Family App - Prisma Schema
+// MVP: Password-based Auth + Chat + Board + Checklist + Admin
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 가족 구성원 (4명 + 관리자 1명)
+model FamilyMember {
+  id        String   @id @default(cuid())
+  name      String   @db.VarChar(100)
+  role      Role     @default(MEMBER)
+  codeHash  String   @unique @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sessions      Session[]
+  chatMessages  ChatMessage[]
+  posts         Post[]
+  comments      Comment[]
+  todos         Todo[]
+  assignedTodos Todo[]        @relation("AssignedTodos")
+
+  @@map("family_members")
+}
+
+enum Role {
+  MEMBER
+  ADMIN
+}
+
+// 세션 (쿠키 기반 인증)
+model Session {
+  id        String   @id @default(cuid())
+  memberId  String
+  token     String   @unique @db.VarChar(500)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  member FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+  @@index([token])
+  @@map("sessions")
+}
+
+// 채팅방
+model ChatRoom {
+  id        String   @id @default(cuid())
+  name      String   @db.VarChar(200)
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  messages ChatMessage[]
+
+  @@map("chat_rooms")
+}
+
+// 채팅 메시지
+model ChatMessage {
+  id        String   @id @default(cuid())
+  roomId    String
+  senderId  String
+  content   String   @db.Text
+  imageUrl  String?  @db.VarChar(500)
+  createdAt DateTime @default(now())
+
+  room   ChatRoom     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender FamilyMember @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+// 게시글
+model Post {
+  id        String   @id @default(cuid())
+  authorId  String
+  title     String   @db.VarChar(300)
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author   FamilyMember @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments Comment[]
+
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("posts")
+}
+
+// 댓글
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  authorId  String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  post   Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author FamilyMember @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([authorId])
+  @@map("comments")
+}
+
+// 체크리스트 / 할 일
+model Todo {
+  id          String   @id @default(cuid())
+  title       String   @db.VarChar(300)
+  description String?  @db.Text
+  isDone      Boolean  @default(false)
+  createdBy   String
+  assignedTo  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creator  FamilyMember  @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  assignee FamilyMember? @relation(fields: [assignedTo], references: [id], onDelete: SetNull, name: "AssignedTodos")
+
+  @@index([createdBy])
+  @@index([assignedTo])
+  @@map("todos")
+}
+
+// Phase 2-4에 추가될 모델들 (주석으로 남김)
+/*
+// 캘린더 이벤트
+model CalendarEvent {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startAt     DateTime
+  endAt       DateTime?
+  createdBy   String
+  status      EventStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creator FamilyMember @relation(fields: [createdBy], references: [id])
+}
+
+enum EventStatus {
+  PENDING
+  APPROVED
+}
+
+// 앨범
+model Album {
+  id        String   @id @default(cuid())
+  name      String
+  createdBy String
+  createdAt DateTime @default(now())
+
+  photos  Photo[]
+  creator FamilyMember @relation(fields: [createdBy], references: [id])
+}
+
+// 사진
+model Photo {
+  id         String   @id @default(cuid())
+  albumId    String
+  uploaderId String
+  imageUrl   String
+  caption    String?
+  createdAt  DateTime @default(now())
+
+  album    Album        @relation(fields: [albumId], references: [id])
+  uploader FamilyMember @relation(fields: [uploaderId], references: [id])
+}
+
+// 투표
+model Poll {
+  id        String    @id @default(cuid())
+  question  String
+  createdBy String
+  closesAt  DateTime?
+  createdAt DateTime  @default(now())
+
+  options PollOption[]
+  votes   PollVote[]
+  creator FamilyMember @relation(fields: [createdBy], references: [id])
+}
+
+model PollOption {
+  id     String @id @default(cuid())
+  pollId String
+  text   String
+
+  poll  Poll       @relation(fields: [pollId], references: [id])
+  votes PollVote[]
+}
+
+model PollVote {
+  id       String @id @default(cuid())
+  pollId   String
+  optionId String
+  voterId  String
+
+  poll   Poll         @relation(fields: [pollId], references: [id])
+  option PollOption   @relation(fields: [optionId], references: [id])
+  voter  FamilyMember @relation(fields: [voterId], references: [id])
+
+  @@unique([pollId, voterId])
+}
+
+// 개인 노트
+model PersonalNote {
+  id        String   @id @default(cuid())
+  ownerId   String
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner FamilyMember @relation(fields: [ownerId], references: [id])
+}
+*/
