@@ -6,11 +6,12 @@ import { z } from 'zod'
 
 /**
  * GET /api/todos
- * Get todos with cursor-based pagination and optional filtering
+ * Get todos with cursor-based pagination, filtering, and search
  * Query params:
  *  - cursor: ISO date string of last todo (optional)
  *  - limit: number of todos to fetch (default: 20)
  *  - filter: all | assignedToMe | createdByMe (optional)
+ *  - search: search query for title and description (optional)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -19,13 +20,23 @@ export async function GET(request: NextRequest) {
     const filter = searchParams.get('filter') // all | assignedToMe | createdByMe
     const cursor = searchParams.get('cursor')
     const limit = parseInt(searchParams.get('limit') || '20', 10)
+    const search = searchParams.get('search')
 
     let whereClause: any = {}
 
+    // Apply filter
     if (filter === 'assignedToMe') {
-      whereClause = { assignedTo: member.id }
+      whereClause.assignedTo = member.id
     } else if (filter === 'createdByMe') {
-      whereClause = { createdBy: member.id }
+      whereClause.createdBy = member.id
+    }
+
+    // Apply search
+    if (search) {
+      whereClause.OR = [
+        { title: { contains: search, mode: 'insensitive' as const } },
+        { description: { contains: search, mode: 'insensitive' as const } },
+      ]
     }
 
     const todos = await prisma.todo.findMany({
@@ -36,7 +47,7 @@ export async function GET(request: NextRequest) {
         },
         skip: 1, // Skip the cursor itself
       }),
-      where: whereClause,
+      where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
       include: {
         creator: {
           select: {

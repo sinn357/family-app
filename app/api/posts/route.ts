@@ -6,10 +6,11 @@ import { z } from 'zod'
 
 /**
  * GET /api/posts
- * Get posts with cursor-based pagination
+ * Get posts with cursor-based pagination and search
  * Query params:
  *  - cursor: ISO date string of last post (optional)
  *  - limit: number of posts to fetch (default: 10)
+ *  - search: search query for title and content (optional)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -18,6 +19,17 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const cursor = searchParams.get('cursor')
     const limit = parseInt(searchParams.get('limit') || '10', 10)
+    const search = searchParams.get('search')
+
+    // Build where clause for search
+    const whereClause = search
+      ? {
+          OR: [
+            { title: { contains: search, mode: 'insensitive' as const } },
+            { content: { contains: search, mode: 'insensitive' as const } },
+          ],
+        }
+      : {}
 
     const posts = await prisma.post.findMany({
       take: limit + 1, // Fetch one extra to check if there are more
@@ -27,6 +39,7 @@ export async function GET(request: NextRequest) {
         },
         skip: 1, // Skip the cursor itself
       }),
+      where: whereClause,
       include: {
         author: {
           select: {

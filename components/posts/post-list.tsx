@@ -4,12 +4,25 @@ import { usePosts } from '@/lib/hooks/use-posts'
 import { PostItem } from './post-item'
 import { EmptyState } from '@/components/ui/empty-state'
 import { PostListSkeleton } from './post-skeleton'
-import { MessageSquare, Loader2 } from 'lucide-react'
+import { MessageSquare, Loader2, Search, X } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { useEffect, useRef } from 'react'
+import { Input } from '@/components/ui/input'
+import { useEffect, useRef, useState } from 'react'
 
 export function PostList() {
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [search])
+
   const {
     data,
     isLoading,
@@ -17,7 +30,7 @@ export function PostList() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = usePosts()
+  } = usePosts(debouncedSearch || undefined)
 
   // Intersection Observer for infinite scroll
   const loadMoreRef = useRef<HTMLDivElement>(null)
@@ -63,23 +76,74 @@ export function PostList() {
 
   if (posts.length === 0) {
     return (
-      <EmptyState
-        icon={MessageSquare}
-        title="No posts yet"
-        description="Be the first to share something with your family! Create a new post to get started."
-        action={
-          <Link href="/board/new">
-            <Button className="bg-primary hover:bg-primary/90">
-              Create First Post
-            </Button>
-          </Link>
-        }
-      />
+      <>
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search posts by title or content..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        <EmptyState
+          icon={MessageSquare}
+          title={debouncedSearch ? "No posts found" : "No posts yet"}
+          description={
+            debouncedSearch
+              ? `No posts match "${debouncedSearch}". Try a different search.`
+              : "Be the first to share something with your family! Create a new post to get started."
+          }
+          action={
+            !debouncedSearch && (
+              <Link href="/board/new">
+                <Button className="bg-primary hover:bg-primary/90">
+                  Create First Post
+                </Button>
+              </Link>
+            )
+          }
+        />
+      </>
     )
   }
 
   return (
     <div className="space-y-4">
+      {/* Search Bar */}
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search posts by title or content..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10 pr-10"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Posts */}
       {posts.map((post: any) => (
         <PostItem key={post.id} post={post} />
       ))}

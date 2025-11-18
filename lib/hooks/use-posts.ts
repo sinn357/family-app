@@ -3,15 +3,18 @@ import type { CreatePostInput, UpdatePostInput, CreateCommentInput, UpdateCommen
 import { handleApiError } from '@/lib/utils/error'
 
 /**
- * Get posts with infinite scroll pagination
+ * Get posts with infinite scroll pagination and search
  */
-export function usePosts() {
+export function usePosts(search?: string) {
   return useInfiniteQuery({
-    queryKey: ['posts'],
+    queryKey: ['posts', search],
     queryFn: async ({ pageParam }: { pageParam?: string }) => {
       const url = new URL('/api/posts', window.location.origin)
       if (pageParam) {
         url.searchParams.set('cursor', pageParam)
+      }
+      if (search) {
+        url.searchParams.set('search', search)
       }
       url.searchParams.set('limit', '10')
 

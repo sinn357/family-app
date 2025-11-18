@@ -3,11 +3,11 @@ import type { CreateTodoInput, UpdateTodoInput } from '@/lib/validations/todo'
 import { handleApiError } from '@/lib/utils/error'
 
 /**
- * Get todos with infinite scroll pagination and optional filter
+ * Get todos with infinite scroll pagination, filter, and search
  */
-export function useTodos(filter?: 'all' | 'assignedToMe' | 'createdByMe') {
+export function useTodos(filter?: 'all' | 'assignedToMe' | 'createdByMe', search?: string) {
   return useInfiniteQuery({
-    queryKey: ['todos', filter],
+    queryKey: ['todos', filter, search],
     queryFn: async ({ pageParam }: { pageParam?: string }) => {
       const url = new URL('/api/todos', window.location.origin)
       if (pageParam) {
@@ -15,6 +15,9 @@ export function useTodos(filter?: 'all' | 'assignedToMe' | 'createdByMe') {
       }
       if (filter && filter !== 'all') {
         url.searchParams.set('filter', filter)
+      }
+      if (search) {
+        url.searchParams.set('search', search)
       }
       url.searchParams.set('limit', '20')
 

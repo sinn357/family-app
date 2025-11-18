@@ -4,8 +4,9 @@ import { useTodos } from '@/lib/hooks/use-todos'
 import { TodoItem } from './todo-item'
 import { EmptyState } from '@/components/ui/empty-state'
 import { TodoListSkeleton } from './todo-skeleton'
-import { CheckSquare, Loader2 } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { CheckSquare, Loader2, Search, X } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { useEffect, useRef, useState } from 'react'
 
 interface TodoListProps {
   filter: 'all' | 'assignedToMe' | 'createdByMe'
@@ -13,6 +14,18 @@ interface TodoListProps {
 }
 
 export function TodoList({ filter, currentUserId }: TodoListProps) {
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [search])
+
   const {
     data,
     isLoading,
@@ -20,7 +33,7 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useTodos(filter)
+  } = useTodos(filter, debouncedSearch || undefined)
 
   // Intersection Observer for infinite scroll
   const loadMoreRef = useRef<HTMLDivElement>(null)
@@ -66,6 +79,13 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
 
   if (todos.length === 0) {
     const getEmptyMessage = () => {
+      if (debouncedSearch) {
+        return {
+          title: 'No todos found',
+          description: `No todos match "${debouncedSearch}". Try a different search.`,
+        }
+      }
+
       switch (filter) {
         case 'assignedToMe':
           return {
@@ -88,16 +108,61 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
     const message = getEmptyMessage()
 
     return (
-      <EmptyState
-        icon={CheckSquare}
-        title={message.title}
-        description={message.description}
-      />
+      <>
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search todos by title or description..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        <EmptyState
+          icon={CheckSquare}
+          title={message.title}
+          description={message.description}
+        />
+      </>
     )
   }
 
   return (
     <div className="space-y-3">
+      {/* Search Bar */}
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search todos by title or description..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10 pr-10"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Todos */}
       {todos.map((todo: any) => (
         <TodoItem key={todo.id} todo={todo} currentUserId={currentUserId} />
       ))}
