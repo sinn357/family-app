@@ -232,7 +232,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ postId: s
 
         <CommentForm postId={postId} />
 
-        <CommentList comments={post.comments || []} postId={postId} />
+        <CommentList comments={post.comments || []} postId={postId} currentUserId={currentUserId} />
       </div>
     </div>
   )

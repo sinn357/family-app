@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useMemo, useCallback, memo } from 'react'
 import { useUpdateComment, useDeleteComment } from '@/lib/hooks/use-posts'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -18,54 +18,40 @@ interface CommentItemProps {
     }
   }
   postId: string
+  currentUserId: string
 }
 
-export function CommentItem({ comment, postId }: CommentItemProps) {
-  const [currentUserId, setCurrentUserId] = useState<string>('')
+function CommentItemComponent({ comment, postId, currentUserId }: CommentItemProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editContent, setEditContent] = useState(comment.content)
   const updateComment = useUpdateComment(postId)
   const deleteComment = useDeleteComment(postId)
 
-  // Get current user ID from session
-  useEffect(() => {
-    async function fetchSession() {
-      try {
-        const res = await fetch('/api/auth/session', {
-          credentials: 'include',
-        })
-        if (res.ok) {
-          const data = await res.json()
-          setCurrentUserId(data.member.id)
-        }
-      } catch (err) {
-        console.error('Failed to fetch session:', err)
-      }
-    }
-    fetchSession()
-  }, [])
+  const formattedDate = useMemo(() => {
+    return new Date(comment.createdAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }, [comment.createdAt])
 
-  const formattedDate = new Date(comment.createdAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  const isAuthor = useMemo(() => {
+    return comment.author.id === currentUserId
+  }, [comment.author.id, currentUserId])
 
-  const isAuthor = comment.author.id === currentUserId
-
-  function handleStartEdit() {
+  const handleStartEdit = useCallback(() => {
     setEditContent(comment.content)
     setIsEditing(true)
-  }
+  }, [comment.content])
 
-  function handleCancelEdit() {
+  const handleCancelEdit = useCallback(() => {
     setIsEditing(false)
     setEditContent(comment.content)
-  }
+  }, [comment.content])
 
-  async function handleSaveEdit() {
+  const handleSaveEdit = useCallback(async () => {
     if (!editContent.trim()) {
       toast.error('Comment cannot be empty')
       return
@@ -83,9 +69,9 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
       console.error('Failed to update comment:', err)
       toast.error(message)
     }
-  }
+  }, [editContent, updateComment, comment.id])
 
-  async function handleDelete() {
+  const handleDelete = useCallback(async () => {
     if (!confirm('Are you sure you want to delete this comment?')) {
       return
     }
@@ -98,7 +84,7 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
       console.error('Failed to delete comment:', err)
       toast.error(message)
     }
-  }
+  }, [deleteComment, comment.id])
 
   return (
     <div className="bg-gray-50 rounded-lg p-4">
@@ -163,3 +149,5 @@ export function CommentItem({ comment, postId }: CommentItemProps) {
     </div>
   )
 }
+
+export const CommentItem = memo(CommentItemComponent)

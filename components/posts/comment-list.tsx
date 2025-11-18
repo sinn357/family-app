@@ -11,9 +11,10 @@ interface CommentListProps {
     }
   }>
   postId: string
+  currentUserId: string
 }
 
-export function CommentList({ comments, postId }: CommentListProps) {
+export function CommentList({ comments, postId, currentUserId }: CommentListProps) {
   if (comments.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -25,7 +26,12 @@ export function CommentList({ comments, postId }: CommentListProps) {
   return (
     <div className="space-y-4">
       {comments.map((comment) => (
-        <CommentItem key={comment.id} comment={comment} postId={postId} />
+        <CommentItem
+          key={comment.id}
+          comment={comment}
+          postId={postId}
+          currentUserId={currentUserId}
+        />
       ))}
     </div>
   )

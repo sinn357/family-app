@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { CreateTodoInput, UpdateTodoInput } from '@/lib/validations/todo'
+import { handleApiError } from '@/lib/utils/error'
 
 /**
  * Get all todos with optional filter
@@ -13,8 +14,7 @@ export function useTodos(filter?: 'all' | 'assignedToMe' | 'createdByMe') {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to fetch todos')
+        await handleApiError(res)
       }
       return res.json()
     },
@@ -36,8 +36,7 @@ export function useCreateTodo() {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to create todo')
+        await handleApiError(res)
       }
       return res.json()
     },
@@ -62,8 +61,7 @@ export function useUpdateTodo(todoId: string) {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to update todo')
+        await handleApiError(res)
       }
       return res.json()
     },
@@ -74,7 +72,7 @@ export function useUpdateTodo(todoId: string) {
 }
 
 /**
- * Toggle todo isDone status
+ * Toggle todo isDone status with optimistic update
  */
 export function useToggleTodo() {
   const queryClient = useQueryClient()
@@ -88,19 +86,49 @@ export function useToggleTodo() {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to update todo')
+        await handleApiError(res)
       }
       return res.json()
     },
-    onSuccess: () => {
+    // Optimistic update
+    onMutate: async ({ todoId, isDone }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['todos'] })
+
+      // Snapshot the previous value
+      const previousTodos = queryClient.getQueriesData({ queryKey: ['todos'] })
+
+      // Optimistically update all todo queries
+      queryClient.setQueriesData<any>({ queryKey: ['todos'] }, (old: any) => {
+        if (!old?.todos) return old
+        return {
+          ...old,
+          todos: old.todos.map((todo: any) =>
+            todo.id === todoId ? { ...todo, isDone } : todo
+          ),
+        }
+      })
+
+      // Return context with previous data for rollback
+      return { previousTodos }
+    },
+    onError: (_err, _variables, context) => {
+      // Rollback on error
+      if (context?.previousTodos) {
+        context.previousTodos.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data)
+        })
+      }
+    },
+    onSettled: () => {
+      // Refetch after mutation completes
       queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   })
 }
 
 /**
- * Delete a todo
+ * Delete a todo with optimistic update
  */
 export function useDeleteTodo() {
   const queryClient = useQueryClient()
@@ -112,12 +140,38 @@ export function useDeleteTodo() {
         credentials: 'include',
       })
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || 'Failed to delete todo')
+        await handleApiError(res)
       }
       return res.json()
     },
-    onSuccess: () => {
+    // Optimistic update
+    onMutate: async (todoId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['todos'] })
+
+      // Snapshot the previous value
+      const previousTodos = queryClient.getQueriesData({ queryKey: ['todos'] })
+
+      // Optimistically remove the todo
+      queryClient.setQueriesData<any>({ queryKey: ['todos'] }, (old: any) => {
+        if (!old?.todos) return old
+        return {
+          ...old,
+          todos: old.todos.filter((todo: any) => todo.id !== todoId),
+        }
+      })
+
+      return { previousTodos }
+    },
+    onError: (_err, _variables, context) => {
+      // Rollback on error
+      if (context?.previousTodos) {
+        context.previousTodos.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data)
+        })
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   })

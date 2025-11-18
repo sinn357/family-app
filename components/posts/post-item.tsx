@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { memo, useMemo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
@@ -18,16 +19,20 @@ interface PostItemProps {
   }
 }
 
-export function PostItem({ post }: PostItemProps) {
-  const formattedDate = new Date(post.createdAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+function PostItemComponent({ post }: PostItemProps) {
+  const formattedDate = useMemo(() => {
+    return new Date(post.createdAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  }, [post.createdAt])
 
-  const excerpt = post.content.length > 150
-    ? post.content.slice(0, 150) + '...'
-    : post.content
+  const excerpt = useMemo(() => {
+    return post.content.length > 150
+      ? post.content.slice(0, 150) + '...'
+      : post.content
+  }, [post.content])
 
   return (
     <Link href={`/board/${post.id}`}>
@@ -54,3 +59,5 @@ export function PostItem({ post }: PostItemProps) {
     </Link>
   )
 }
+
+export const PostItem = memo(PostItemComponent)
