@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useChatMessages } from '@/lib/hooks/use-chat'
 import { MessageItem } from './message-item'
 import { EmptyState } from '@/components/ui/empty-state'
+import { MessageListSkeleton } from './message-skeleton'
 import { MessageCircle } from 'lucide-react'
 
 interface MessageListProps {
@@ -22,11 +23,7 @@ export function MessageList({ roomId, currentUserId }: MessageListProps) {
   }, [data?.messages])
 
   if (isLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-muted-foreground">Loading messages...</p>
-      </div>
-    )
+    return <MessageListSkeleton />
   }
 
   if (error) {

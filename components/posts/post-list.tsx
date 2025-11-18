@@ -3,6 +3,7 @@
 import { usePosts } from '@/lib/hooks/use-posts'
 import { PostItem } from './post-item'
 import { EmptyState } from '@/components/ui/empty-state'
+import { PostListSkeleton } from './post-skeleton'
 import { MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -11,11 +12,7 @@ export function PostList() {
   const { data, isLoading, error } = usePosts()
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Loading posts...</p>
-      </div>
-    )
+    return <PostListSkeleton />
   }
 
   if (error) {

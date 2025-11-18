@@ -3,6 +3,7 @@
 import { useTodos } from '@/lib/hooks/use-todos'
 import { TodoItem } from './todo-item'
 import { EmptyState } from '@/components/ui/empty-state'
+import { TodoListSkeleton } from './todo-skeleton'
 import { CheckSquare } from 'lucide-react'
 
 interface TodoListProps {
@@ -14,11 +15,7 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
   const { data, isLoading, error } = useTodos(filter)
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Loading todos...</p>
-      </div>
-    )
+    return <TodoListSkeleton />
   }
 
   if (error) {
