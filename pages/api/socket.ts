@@ -42,6 +42,36 @@ export default function handler(
         console.log(`Socket ${socket.id} left room ${roomId}`)
       })
 
+      // Typing indicators
+      socket.on('typing-start', (data: { roomId: string; userId: string; userName: string }) => {
+        socket.to(data.roomId).emit('user-typing', {
+          userId: data.userId,
+          userName: data.userName,
+        })
+      })
+
+      socket.on('typing-stop', (data: { roomId: string; userId: string }) => {
+        socket.to(data.roomId).emit('user-stopped-typing', {
+          userId: data.userId,
+        })
+      })
+
+      // User presence
+      socket.on('user-online', (data: { userId: string; userName: string }) => {
+        socket.broadcast.emit('user-status-change', {
+          userId: data.userId,
+          userName: data.userName,
+          status: 'online',
+        })
+      })
+
+      socket.on('user-offline', (data: { userId: string }) => {
+        socket.broadcast.emit('user-status-change', {
+          userId: data.userId,
+          status: 'offline',
+        })
+      })
+
       socket.on('disconnect', () => {
         console.log('Client disconnected:', socket.id)
       })

@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useChatMessages } from '@/lib/hooks/use-chat'
 import { useSocket } from '@/lib/hooks/use-socket'
 import { MessageItem } from './message-item'
+import { TypingIndicator } from './typing-indicator'
 import { EmptyState } from '@/components/ui/empty-state'
 import { MessageListSkeleton } from './message-skeleton'
 import { MessageCircle } from 'lucide-react'
@@ -20,6 +21,7 @@ export function MessageList({ roomId, currentUserId }: MessageListProps) {
   const queryClient = useQueryClient()
   const bottomRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [typingUsers, setTypingUsers] = useState<Array<{ userId: string; userName: string }>>([])
 
   // Join room and listen for new messages via WebSocket
   useEffect(() => {
@@ -44,14 +46,34 @@ export function MessageList({ roomId, currentUserId }: MessageListProps) {
       })
     }
 
+    // Listen for typing indicators
+    const handleUserTyping = (data: { userId: string; userName: string }) => {
+      // Don't show if it's the current user
+      if (data.userId === currentUserId) return
+
+      setTypingUsers((prev) => {
+        // Avoid duplicates
+        if (prev.some((u) => u.userId === data.userId)) return prev
+        return [...prev, data]
+      })
+    }
+
+    const handleUserStoppedTyping = (data: { userId: string }) => {
+      setTypingUsers((prev) => prev.filter((u) => u.userId !== data.userId))
+    }
+
     socket.on('new-message', handleNewMessage)
+    socket.on('user-typing', handleUserTyping)
+    socket.on('user-stopped-typing', handleUserStoppedTyping)
 
     // Cleanup
     return () => {
       socket.off('new-message', handleNewMessage)
+      socket.off('user-typing', handleUserTyping)
+      socket.off('user-stopped-typing', handleUserStoppedTyping)
       socket.emit('leave-room', roomId)
     }
-  }, [socket, roomId, queryClient])
+  }, [socket, roomId, queryClient, currentUserId])
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -95,6 +117,7 @@ export function MessageList({ roomId, currentUserId }: MessageListProps) {
           isCurrentUser={message.sender.id === currentUserId}
         />
       ))}
+      <TypingIndicator typingUsers={typingUsers} />
       <div ref={messagesEndRef} />
     </div>
   )

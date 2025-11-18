@@ -1,14 +1,23 @@
 'use client'
 
 import { useChatRooms } from '@/lib/hooks/use-chat'
+import { useSocket } from '@/lib/hooks/use-socket'
 import { ChatRoom } from '@/components/chat/chat-room'
+import { OnlineUsers } from '@/components/chat/online-users'
 import { useEffect, useState } from 'react'
 
 export default function ChatPage() {
   const { data, isLoading, error } = useChatRooms()
   const [currentUserId, setCurrentUserId] = useState<string>('')
+  const [currentUserName, setCurrentUserName] = useState<string>('')
 
-  // Get current user ID from session
+  // Initialize socket with user info
+  const { socket, isConnected, onlineUsers } = useSocket({
+    userId: currentUserId,
+    userName: currentUserName,
+  })
+
+  // Get current user ID and name from session
   useEffect(() => {
     async function fetchSession() {
       try {
@@ -18,6 +27,7 @@ export default function ChatPage() {
         if (res.ok) {
           const data = await res.json()
           setCurrentUserId(data.member.id)
+          setCurrentUserName(data.member.name)
         }
       } catch (err) {
         console.error('Failed to fetch session:', err)
@@ -61,10 +71,12 @@ export default function ChatPage() {
 
   return (
     <div className="container mx-auto py-4 px-2 md:py-8 md:px-4">
+      <OnlineUsers onlineUsers={onlineUsers} currentUserId={currentUserId} />
       <ChatRoom
         roomId={defaultRoom.id}
         roomName={defaultRoom.name}
         currentUserId={currentUserId}
+        currentUserName={currentUserName}
       />
     </div>
   )

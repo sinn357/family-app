@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, KeyboardEvent } from 'react'
+import { useState, KeyboardEvent, useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { sendMessageSchema, type SendMessageInput } from '@/lib/validations/chat'
 import { useSendMessage } from '@/lib/hooks/use-chat'
+import { useSocket } from '@/lib/hooks/use-socket'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ImageUpload } from '@/components/ui/image-upload'
@@ -19,11 +20,16 @@ import { toast } from 'sonner'
 
 interface MessageInputProps {
   roomId: string
+  currentUserId: string
+  currentUserName: string
 }
 
-export function MessageInput({ roomId }: MessageInputProps) {
+export function MessageInput({ roomId, currentUserId, currentUserName }: MessageInputProps) {
   const sendMessage = useSendMessage(roomId)
+  const { socket } = useSocket()
   const [error, setError] = useState<string | null>(null)
+  const [isTyping, setIsTyping] = useState(false)
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const form = useForm<SendMessageInput>({
     resolver: zodResolver(sendMessageSchema),
@@ -33,9 +39,66 @@ export function MessageInput({ roomId }: MessageInputProps) {
     },
   })
 
+  // Handle typing indicator
+  const handleTyping = () => {
+    if (!socket || !roomId) return
+
+    // Emit typing-start if not already typing
+    if (!isTyping) {
+      setIsTyping(true)
+      socket.emit('typing-start', {
+        roomId,
+        userId: currentUserId,
+        userName: currentUserName,
+      })
+    }
+
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current)
+    }
+
+    // Set new timeout to stop typing after 3 seconds of inactivity
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false)
+      socket.emit('typing-stop', {
+        roomId,
+        userId: currentUserId,
+      })
+    }, 3000)
+  }
+
+  // Cleanup typing timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current)
+      }
+      if (socket && isTyping) {
+        socket.emit('typing-stop', {
+          roomId,
+          userId: currentUserId,
+        })
+      }
+    }
+  }, [socket, roomId, currentUserId, isTyping])
+
   async function onSubmit(data: SendMessageInput) {
     try {
       setError(null)
+
+      // Stop typing indicator before sending
+      if (isTyping && socket) {
+        setIsTyping(false)
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current)
+        }
+        socket.emit('typing-stop', {
+          roomId,
+          userId: currentUserId,
+        })
+      }
+
       await sendMessage.mutateAsync(data)
       form.reset()
     } catch (err) {
@@ -96,7 +159,11 @@ export function MessageInput({ roomId }: MessageInputProps) {
                       rows={2}
                       disabled={sendMessage.isPending}
                       onKeyDown={handleKeyDown}
-                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e)
+                        handleTyping()
+                      }}
+                      value={field.value}
                     />
                   </FormControl>
                 </FormItem>

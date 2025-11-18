@@ -8,9 +8,10 @@ interface ChatRoomProps {
   roomId: string
   roomName: string
   currentUserId: string
+  currentUserName: string
 }
 
-export function ChatRoom({ roomId, roomName, currentUserId }: ChatRoomProps) {
+export function ChatRoom({ roomId, roomName, currentUserId, currentUserName }: ChatRoomProps) {
   return (
     <Card className="flex flex-col h-[calc(100vh-12rem)] md:h-[calc(100vh-12rem)] max-h-screen">
       <CardHeader className="border-b px-4 py-3 md:px-6 md:py-4">
@@ -18,7 +19,7 @@ export function ChatRoom({ roomId, roomName, currentUserId }: ChatRoomProps) {
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
         <MessageList roomId={roomId} currentUserId={currentUserId} />
-        <MessageInput roomId={roomId} />
+        <MessageInput roomId={roomId} currentUserId={currentUserId} currentUserName={currentUserName} />
       </CardContent>
     </Card>
   )
