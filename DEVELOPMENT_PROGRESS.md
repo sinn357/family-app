@@ -194,15 +194,35 @@ CLOUDINARY_API_SECRET="your-api-secret"
 - **Files 페이지**: `/files` (네비게이션 추가)
 - **권한 관리**: 본인 또는 관리자만 삭제 가능
 
+#### Part 3: 캘린더 통합
+**커밋**: `f6bc9e9 - feat: Implement Phase 6 Part 3 - Calendar integration`
+
+- **CalendarEvent 모델**: title, description, startAt, endAt, location, color, isAllDay
+- **캘린더 이벤트 API**: CRUD 엔드포인트 (`/api/calendar`)
+- **월간 캘린더 뷰**: date-fns 활용, 그리드 형식
+- **이벤트 관리**:
+  - EventForm: 일정 생성/수정 폼 (날짜/시간, 장소, 색상)
+  - EventDetailModal: 상세보기, 수정, 삭제
+  - CalendarContainer: 모달 상태 관리
+- **기능**:
+  - 하루 종일 이벤트 / 시간 지정 이벤트
+  - 색상 코딩으로 시각적 구분
+  - 권한 관리 (생성자 또는 관리자만 수정/삭제)
+  - 월 단위 네비게이션 (이전/다음/오늘)
+- **Calendar 페이지**: `/calendar` (네비게이션 추가)
+
 ---
 
 ## 진행 중인 작업 (In Progress)
 
-### 🔄 Phase 6 Part 3 - 캘린더 통합 (대기 중)
-- [ ] CalendarEvent 모델 추가
-- [ ] 일정 생성/수정/삭제 API
-- [ ] 캘린더 UI (월간/주간 보기)
-- [ ] 일정 알림
+현재 모든 주요 기능이 완료되었습니다! 🎉
+
+### 향후 개선 사항 (선택사항)
+- [ ] 캘린더 일정 알림 자동화
+- [ ] 주간 뷰 추가
+- [ ] 일정 반복 설정 (매일/매주/매월)
+- [ ] 일정 공유 및 초대
+- [ ] iCalendar 포맷 내보내기
 
 ---
 
