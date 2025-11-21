@@ -30,6 +30,7 @@ model FamilyMember {
   notificationsReceived  Notification[]         @relation("ReceivedNotifications")
   notificationSettings   NotificationSetting?
   uploadedFiles          File[]
+  calendarEvents         CalendarEvent[]
 
   @@map("family_members")
 }
@@ -207,6 +208,27 @@ model File {
   @@index([uploaderId])
   @@index([createdAt])
   @@map("files")
+}
+
+// Phase 6: 캘린더
+model CalendarEvent {
+  id          String      @id @default(cuid())
+  title       String      @db.VarChar(300)
+  description String?     @db.Text
+  startAt     DateTime
+  endAt       DateTime?
+  location    String?     @db.VarChar(300)
+  color       String?     @db.VarChar(20)
+  isAllDay    Boolean     @default(false)
+  createdBy   String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  creator FamilyMember @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@index([createdBy])
+  @@index([startAt])
+  @@map("calendar_events")
 }
 
 // Phase 2-4에 추가될 모델들 (주석으로 남김)
