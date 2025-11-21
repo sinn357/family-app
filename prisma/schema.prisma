@@ -20,12 +20,15 @@ model FamilyMember {
   updatedAt DateTime @updatedAt
 
   // Relations
-  sessions      Session[]
-  chatMessages  ChatMessage[]
-  posts         Post[]
-  comments      Comment[]
-  todos         Todo[]
-  assignedTodos Todo[]        @relation("AssignedTodos")
+  sessions               Session[]
+  chatMessages           ChatMessage[]
+  posts                  Post[]
+  comments               Comment[]
+  todos                  Todo[]
+  assignedTodos          Todo[]                 @relation("AssignedTodos")
+  notificationsSent      Notification[]         @relation("SentNotifications")
+  notificationsReceived  Notification[]         @relation("ReceivedNotifications")
+  notificationSettings   NotificationSetting?
 
   @@map("family_members")
 }
@@ -132,6 +135,58 @@ model Todo {
   @@index([createdBy])
   @@index([assignedTo])
   @@map("todos")
+}
+
+// Phase 4: 알림 시스템
+model Notification {
+  id         String           @id @default(cuid())
+  type       NotificationType
+  title      String           @db.VarChar(200)
+  content    String           @db.Text
+  recipientId String
+  senderId   String?
+  relatedType RelatedType?
+  relatedId  String?
+  isRead     Boolean          @default(false)
+  readAt     DateTime?
+  createdAt  DateTime         @default(now())
+
+  recipient FamilyMember  @relation(fields: [recipientId], references: [id], onDelete: Cascade, name: "ReceivedNotifications")
+  sender    FamilyMember? @relation(fields: [senderId], references: [id], onDelete: SetNull, name: "SentNotifications")
+
+  @@index([recipientId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  COMMENT // 댓글 알림
+  MENTION // 멘션 알림
+  SYSTEM  // 시스템 알림
+  TODO    // Todo 할당 알림
+}
+
+enum RelatedType {
+  POST
+  COMMENT
+  TODO
+}
+
+model NotificationSetting {
+  id              String   @id @default(cuid())
+  memberId        String   @unique
+  notifyOnComment Boolean  @default(true)
+  notifyOnMention Boolean  @default(true)
+  notifyOnSystem  Boolean  @default(true)
+  notifyOnTodo    Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  member FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@map("notification_settings")
 }
 
 // Phase 2-4에 추가될 모델들 (주석으로 남김)

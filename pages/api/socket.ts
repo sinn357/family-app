@@ -30,6 +30,13 @@ export default function handler(
     io.on('connection', (socket) => {
       console.log('Client connected:', socket.id)
 
+      // Join user's personal notification room
+      socket.on('join-notifications', (userId: string) => {
+        const room = `notifications:${userId}`
+        socket.join(room)
+        console.log(`Socket ${socket.id} joined notification room for user ${userId}`)
+      })
+
       // Join a chat room
       socket.on('join-room', (roomId: string) => {
         socket.join(roomId)

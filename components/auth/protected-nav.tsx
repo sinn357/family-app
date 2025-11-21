@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Menu, X } from 'lucide-react'
+import { NotificationBell } from '@/components/notifications/notification-bell'
 
 interface ProtectedNavProps {
   member: {
@@ -39,6 +40,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
     { href: '/chat', label: 'Chat' },
     { href: '/board', label: 'Board' },
     { href: '/todos', label: 'Todos' },
+    { href: '/settings', label: 'Settings' },
     ...(member.role === 'ADMIN' ? [{ href: '/admin', label: 'Admin' }] : []),
   ]
 
@@ -71,6 +73,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
 
           {/* Desktop User Info & Logout */}
           <div className="hidden md:flex items-center space-x-4">
+            <NotificationBell userId={member.id} />
             <span className="text-sm text-foreground/80">
               {member.name}
               {member.role === 'ADMIN' && (

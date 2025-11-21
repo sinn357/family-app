@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { requireAuth } from '@/lib/auth'
 import { createCommentSchema } from '@/lib/validations/post'
+import { notifyComment } from '@/lib/notification-utils'
 import { z } from 'zod'
 
 /**
@@ -19,7 +20,7 @@ export async function POST(
     // Check if post exists
     const post = await prisma.post.findUnique({
       where: { id: postId },
-      select: { id: true },
+      select: { id: true, authorId: true },
     })
 
     if (!post) {
@@ -46,6 +47,14 @@ export async function POST(
           },
         },
       },
+    })
+
+    // Send notification to post author
+    await notifyComment({
+      postId,
+      postAuthorId: post.authorId,
+      commentAuthorId: member.id,
+      commentAuthorName: member.name,
     })
 
     return NextResponse.json({ comment }, { status: 201 })
