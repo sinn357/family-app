@@ -116,21 +116,93 @@ CLOUDINARY_API_SECRET="your-api-secret"
 
 ---
 
+### ✅ Phase 4 - 알림 시스템 (2025-11-21)
+
+**커밋**: `3386d65 - feat: Implement Phase 4 - Notification system with real-time alerts`
+
+#### 1. 알림 데이터 모델
+- **Notification 모델**: type, title, content, recipientId, senderId, relatedType, relatedId, isRead, readAt
+- **NotificationSetting 모델**: 사용자별 알림 설정 (댓글, 멘션, 시스템, Todo)
+- Socket.IO 통합으로 실시간 알림 전달
+
+#### 2. 알림 API
+- `/api/notifications` - GET (목록), POST (생성)
+- `/api/notifications/unread-count` - 읽지 않은 알림 개수
+- `/api/notifications/[id]/read` - 알림 읽음 처리
+- `/api/notifications/settings` - 알림 설정 관리
+
+#### 3. 자동 알림 트리거
+- `lib/notification-utils.ts`: 알림 생성 헬퍼 함수
+- 댓글 작성 시 자동 알림 (게시글 작성자에게)
+- 알림 설정 확인 후 전송
+
+#### 4. UI 컴포넌트
+- `NotificationBell`: 헤더 알림 아이콘 (읽지 않은 개수 배지)
+- `NotificationDropdown`: 알림 목록 드롭다운
+- `NotificationItem`: 개별 알림 아이템
+- `NotificationSettings`: 알림 설정 페이지
+- `/settings` 페이지 추가
+
+---
+
+### ✅ Phase 5 - 모바일 최적화 & PWA (2025-11-21)
+
+**커밋**: `f55efb2 - feat: Implement Phase 5 - Mobile optimization and PWA`
+
+#### 1. PWA 구현
+- `@ducanh2912/next-pwa` 설치 (Next.js 16 호환)
+- `manifest.json` 생성
+- 오프라인 캐싱, 설치 가능한 앱
+
+#### 2. 반응형 최적화
+- 모든 페이지 반응형 패딩 (`py-4 md:py-8`, `px-3 md:px-4`)
+- 반응형 폰트 크기 (`text-2xl md:text-3xl`)
+- 모바일: 버튼 라벨 축약 (예: "새 게시글" → "New")
+
+#### 3. 모바일 전용 UI
+- NotificationDropdown: 데스크톱 드롭다운 / 모바일 전체화면 모달
+- 터치 친화적 버튼 크기
+
+#### 4. Vercel 배포 이슈 해결
+- Turbopack/webpack 충돌 해결
+- `turbopack: {}` 설정 추가
+
+---
+
+### ✅ Phase 6 - 고급 기능 (2025-11-21)
+
+#### Part 1: 통합 검색 시스템
+**커밋**: `ac15d0b - feat: Implement Phase 6 - Advanced search functionality`
+
+- **통합 검색 API**: `/api/search` (Posts, Comments, Todos 검색)
+- **SearchDialog**: ⌘K/Ctrl+K 키보드 단축키 모달
+- **디바운싱**: 500ms 디바운스로 API 호출 최적화
+- **타입별 필터링**: 전체/게시글/댓글/할일 필터
+- **검색 결과 그룹화**: 타입별로 결과 분리 표시
+
+#### Part 2: 파일 공유 시스템
+**커밋**: `e1dd3b3 - feat: Implement Phase 6 - File sharing system`
+
+- **File 모델**: name, originalName, url, fileType, fileSize, description, uploaderId
+- **파일 업로드 API**: `/api/files` POST (Cloudinary raw resource type)
+- **파일 타입 검증**: PDF, DOC, DOCX, XLS, XLSX, TXT만 허용
+- **파일 목록/삭제 API**: GET, DELETE `/api/files/[id]`
+- **UI 컴포넌트**:
+  - `FileUploadForm`: 파일 선택, 설명 입력, 업로드
+  - `FileList`: 파일 목록, 다운로드, 삭제 버튼
+  - `FilesContainer`: 업로드 폼 + 목록 통합
+- **Files 페이지**: `/files` (네비게이션 추가)
+- **권한 관리**: 본인 또는 관리자만 삭제 가능
+
+---
+
 ## 진행 중인 작업 (In Progress)
 
-### 🔄 Phase 3 Part 2 - 추가 실시간 기능
-
-#### 다음 작업:
-1. **읽음 표시 (Read Receipts)** - 대기 중
-   - DB 스키마 수정 필요 (ChatMessage에 readBy 추가)
-   - 메시지 읽음 추적
-   - 읽음 표시 UI
-
-2. **알림 시스템** - 대기 중
-   - 새 메시지 알림
-   - 새 댓글 알림
-   - 새 포스트 알림
-   - 브라우저 푸시 알림 (선택사항)
+### 🔄 Phase 6 Part 3 - 캘린더 통합 (대기 중)
+- [ ] CalendarEvent 모델 추가
+- [ ] 일정 생성/수정/삭제 API
+- [ ] 캘린더 UI (월간/주간 보기)
+- [ ] 일정 알림
 
 ---
 
