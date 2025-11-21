@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Menu, X } from 'lucide-react'
 import { NotificationBell } from '@/components/notifications/notification-bell'
+import { SearchDialog } from '@/components/search/search-dialog'
 
 interface ProtectedNavProps {
   member: {
@@ -73,6 +74,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
 
           {/* Desktop User Info & Logout */}
           <div className="hidden md:flex items-center space-x-4">
+            <SearchDialog />
             <NotificationBell userId={member.id} />
             <span className="text-sm text-foreground/80">
               {member.name}

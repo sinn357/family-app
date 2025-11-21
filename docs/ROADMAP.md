@@ -1,20 +1,25 @@
 # Family App Roadmap
 
 ## Current Status
-Phase 5: 모바일 최적화 ✅ 완료
+Phase 6: 고급 기능 (검색) ✅ 완료
 
 ---
 
 ## Next Tasks
 
-### Phase 6: 고급 기능
+### Phase 6: 고급 기능 (계속)
 - [ ] 파일 공유 (문서, PDF)
 - [ ] 캘린더 통합
-- [ ] 검색 기능 강화
 
 ---
 
 ## Completed Phases
+
+### Phase 6: 고급 기능 - 검색 ✅
+- [x] 통합 검색 API (게시글, 댓글, Todo)
+- [x] 검색 UI 컴포넌트 (모달, debounce)
+- [x] 헤더에 검색 버튼 추가
+- [x] 키보드 단축키 (⌘K / Ctrl+K)
 
 ### Phase 5: 모바일 최적화 ✅
 - [x] PWA 설정 (manifest.json, next-pwa)
