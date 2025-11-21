@@ -16,6 +16,19 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Family App",
   description: "Private family collaboration platform",
+  manifest: "/manifest.json",
+  themeColor: "#3b82f6",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Family App",
+  },
 };
 
 export default function RootLayout({

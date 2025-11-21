@@ -1,22 +1,11 @@
 # Family App Roadmap
 
 ## Current Status
-Phase 3: Cloudinary 이미지 업로드 ✅ 완료
+Phase 5: 모바일 최적화 ✅ 완료
 
 ---
 
 ## Next Tasks
-
-### Phase 4: 알림 시스템
-- [ ] Socket.IO 기반 실시간 알림
-- [ ] 알림 설정 UI (사용자별)
-- [ ] 읽음/안읽음 표시
-- [ ] 알림 타입별 분류 (댓글, 멘션, 시스템)
-
-### Phase 5: 모바일 최적화
-- [ ] 반응형 디자인 개선
-- [ ] 터치 제스처 지원
-- [ ] PWA 구현 검토
 
 ### Phase 6: 고급 기능
 - [ ] 파일 공유 (문서, PDF)
@@ -26,6 +15,19 @@ Phase 3: Cloudinary 이미지 업로드 ✅ 완료
 ---
 
 ## Completed Phases
+
+### Phase 5: 모바일 최적화 ✅
+- [x] PWA 설정 (manifest.json, next-pwa)
+- [x] 알림 드롭다운 모바일 최적화 (전체 화면 모달)
+- [x] 주요 페이지 모바일 반응형 개선
+- [x] 반응형 폰트 크기 및 패딩 조정
+
+### Phase 4: 알림 시스템 ✅
+- [x] Notification DB 스키마 추가
+- [x] 알림 REST API 구현
+- [x] Socket.IO 실시간 알림
+- [x] 알림 UI 컴포넌트 (벨 아이콘, 드롭다운)
+- [x] 알림 설정 페이지
 
 ### Phase 3: Cloudinary 이미지 업로드 ✅
 - [x] Cloudinary 계정 설정
@@ -49,4 +51,4 @@ Phase 3: Cloudinary 이미지 업로드 ✅ 완료
 
 ---
 
-**Last Updated**: 2025-11-18
+**Last Updated**: 2025-11-21

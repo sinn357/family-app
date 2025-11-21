@@ -13,7 +13,7 @@ export default async function SettingsPage() {
   return (
     <>
       <ProtectedNav member={member} />
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-3 md:px-4 py-4 md:py-8">
         <div className="max-w-2xl mx-auto">
           <NotificationSettings />
         </div>
