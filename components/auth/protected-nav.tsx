@@ -41,6 +41,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
     { href: '/chat', label: 'Chat' },
     { href: '/board', label: 'Board' },
     { href: '/todos', label: 'Todos' },
+    { href: '/files', label: 'Files' },
     { href: '/settings', label: 'Settings' },
     ...(member.role === 'ADMIN' ? [{ href: '/admin', label: 'Admin' }] : []),
   ]

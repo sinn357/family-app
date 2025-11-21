@@ -29,6 +29,7 @@ model FamilyMember {
   notificationsSent      Notification[]         @relation("SentNotifications")
   notificationsReceived  Notification[]         @relation("ReceivedNotifications")
   notificationSettings   NotificationSetting?
+  uploadedFiles          File[]
 
   @@map("family_members")
 }
@@ -187,6 +188,25 @@ model NotificationSetting {
   member FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   @@map("notification_settings")
+}
+
+// Phase 6: 파일 공유
+model File {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(500)
+  originalName String  @db.VarChar(500)
+  url         String   @db.VarChar(1000)
+  fileType    String   @db.VarChar(100)
+  fileSize    Int
+  description String?  @db.Text
+  uploaderId  String
+  createdAt   DateTime @default(now())
+
+  uploader FamilyMember @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  @@index([uploaderId])
+  @@index([createdAt])
+  @@map("files")
 }
 
 // Phase 2-4에 추가될 모델들 (주석으로 남김)
