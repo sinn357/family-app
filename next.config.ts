@@ -13,8 +13,13 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
+  // Capacitor 모바일 앱 빌드를 위한 정적 export 설정
+  output: process.env.BUILD_MODE === 'mobile' ? 'export' : undefined,
+
   turbopack: {},
   images: {
+    // 정적 export 시 이미지 최적화 비활성화
+    unoptimized: process.env.BUILD_MODE === 'mobile' ? true : false,
     remotePatterns: [
       {
         protocol: 'https',
@@ -23,6 +28,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  // Capacitor 앱에서 trailing slash 처리
+  trailingSlash: true,
 };
 
 export default withPWA(nextConfig);
