@@ -4,7 +4,6 @@ const config: CapacitorConfig = {
   appId: 'com.family.app',
   appName: 'Family App',
   webDir: 'out',
-  bundledWebRuntime: false,
   server: {
     // 개발 모드에서 로컬 서버 사용 (옵션)
     // url: 'http://192.168.x.x:3003',
