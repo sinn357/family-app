@@ -20,44 +20,62 @@ export function MessageItem({ message, isCurrentUser }: MessageItemProps) {
     minute: '2-digit',
   })
 
+  // Get first letter of sender name for avatar
+  const avatarLetter = message.sender.name.charAt(0).toUpperCase()
+
   return (
     <div
-      className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-3 md:mb-4`}
+      className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-4 md:mb-5 px-2 animate-in fade-in slide-in-from-bottom-2 duration-300`}
     >
-      <div
-        className={`max-w-[85%] md:max-w-[70%] rounded-lg px-3 py-2 md:px-4 md:py-2 ${
-          isCurrentUser
-            ? 'bg-blue-600 text-white'
-            : 'bg-gray-200 text-gray-900'
-        }`}
-      >
+      <div className={`flex items-end gap-2 max-w-[85%] md:max-w-[70%] ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}>
+        {/* Avatar */}
         {!isCurrentUser && (
-          <p className="text-xs font-semibold mb-1">{message.sender.name}</p>
-        )}
-
-        {/* Image if present */}
-        {message.imageUrl && (
-          <div className="relative w-full mb-2 rounded-lg overflow-hidden">
-            <Image
-              src={message.imageUrl}
-              alt="Attached image"
-              width={300}
-              height={200}
-              className="object-cover rounded w-full h-auto"
-            />
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-md">
+            {avatarLetter}
           </div>
         )}
 
-        <p className="text-sm md:text-sm whitespace-pre-wrap break-words">
-          {message.content}
-        </p>
-        <p
-          className={`text-xs mt-1 ${
-            isCurrentUser ? 'text-blue-100' : 'text-gray-500'
-          }`}
-        >
-          {formattedTime}
-        </p>
+        <div className="flex flex-col gap-1">
+          {/* Sender name for others */}
+          {!isCurrentUser && (
+            <p className="text-xs font-medium text-muted-foreground ml-2">{message.sender.name}</p>
+          )}
+
+          {/* Message bubble */}
+          <div
+            className={`rounded-2xl px-4 py-2.5 md:px-5 md:py-3 shadow-md transition-all duration-200 hover:shadow-lg ${
+              isCurrentUser
+                ? 'bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-br-sm'
+                : 'bg-card/80 backdrop-blur-md text-card-foreground border border-border/50 rounded-bl-sm'
+            }`}
+          >
+            {/* Image if present */}
+            {message.imageUrl && (
+              <div className="relative w-full mb-3 rounded-xl overflow-hidden">
+                <Image
+                  src={message.imageUrl}
+                  alt="Attached image"
+                  width={300}
+                  height={200}
+                  className="object-cover rounded-xl w-full h-auto"
+                />
+              </div>
+            )}
+
+            <p className="text-sm md:text-base whitespace-pre-wrap break-words leading-relaxed">
+              {message.content}
+            </p>
+          </div>
+
+          {/* Timestamp */}
+          <p
+            className={`text-xs text-muted-foreground ${
+              isCurrentUser ? 'text-right mr-2' : 'ml-2'
+            }`}
+          >
+            {formattedTime}
+          </p>
+        </div>
       </div>
     </div>
   )

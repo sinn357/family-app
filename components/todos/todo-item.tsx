@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
+import { Trash2, User } from 'lucide-react'
 
 interface TodoItemProps {
   todo: {
@@ -64,39 +65,52 @@ export function TodoItem({ todo, currentUserId }: TodoItemProps) {
     }
   }
 
+  const creatorLetter = todo.creator.name.charAt(0).toUpperCase()
+  const assigneeLetter = todo.assignee?.name.charAt(0).toUpperCase()
+
   return (
-    <Card className={todo.isDone ? 'opacity-60' : ''}>
-      <CardContent className="p-4">
-        <div className="flex items-start gap-3">
+    <Card className={`group transition-all duration-200 ${todo.isDone ? 'opacity-60 bg-success/5' : ''}`}>
+      <CardContent className="p-5">
+        <div className="flex items-start gap-4">
           <Checkbox
             checked={todo.isDone}
             onCheckedChange={handleToggle}
             disabled={toggleTodo.isPending}
-            className="mt-1"
+            className="mt-1.5 w-5 h-5 data-[state=checked]:bg-success data-[state=checked]:border-success"
           />
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <h3
-              className={`font-medium text-lg ${
-                todo.isDone ? 'line-through text-gray-500' : 'text-gray-900'
+              className={`font-semibold text-base transition-colors ${
+                todo.isDone ? 'line-through text-muted-foreground' : 'text-foreground group-hover:text-primary'
               }`}
             >
               {todo.title}
             </h3>
             {todo.description && (
-              <p className="text-gray-600 text-sm mt-1 whitespace-pre-wrap">
+              <p className={`text-sm mt-2 whitespace-pre-wrap ${todo.isDone ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                 {todo.description}
               </p>
             )}
-            <div className="flex items-center gap-2 mt-2 flex-wrap">
-              <span className="text-xs text-gray-500">
-                Created by {todo.creator.name}
-              </span>
+            <div className="flex items-center gap-3 mt-3 flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-xs font-bold text-primary">
+                  {creatorLetter}
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {todo.creator.name}
+                </span>
+              </div>
               {todo.assignee && (
                 <>
-                  <span className="text-xs text-gray-400">·</span>
-                  <Badge variant="secondary" className="text-xs">
-                    Assigned to {todo.assignee.name}
-                  </Badge>
+                  <span className="text-xs text-muted-foreground">→</span>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-success/20 to-info/20 flex items-center justify-center text-xs font-bold text-success">
+                      {assigneeLetter}
+                    </div>
+                    <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                      {todo.assignee.name}
+                    </Badge>
+                  </div>
                 </>
               )}
             </div>
@@ -104,12 +118,12 @@ export function TodoItem({ todo, currentUserId }: TodoItemProps) {
           {isCreator && (
             <Button
               variant="ghost"
-              size="sm"
+              size="icon-sm"
               onClick={handleDelete}
               disabled={isDeleting}
-              className="text-red-600 hover:text-red-800 hover:bg-red-50"
+              className="text-destructive hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
             >
-              Delete
+              <Trash2 className="w-4 h-4" />
             </Button>
           )}
         </div>

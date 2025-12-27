@@ -117,22 +117,22 @@ export function MessageInput({ roomId, currentUserId, currentUserName }: Message
   }
 
   return (
-    <div className="border-t border-gray-200 p-3 md:p-4 bg-white">
+    <div className="border-t border-border/50 p-4 md:p-5 bg-card/50 backdrop-blur-md">
       {error && (
-        <div className="mb-2 text-sm text-red-600 bg-red-50 p-2 rounded">
+        <div className="mb-3 text-sm text-destructive bg-destructive/10 p-3 rounded-xl border border-destructive/20">
           {error}
         </div>
       )}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 md:space-y-3">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
           {/* Image Upload */}
           <FormField
             control={form.control}
             name="imageUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs text-gray-600">
-                  Attach Image (Optional)
+                <FormLabel className="text-xs font-medium text-muted-foreground">
+                  📎 Attach Image (Optional)
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -146,7 +146,7 @@ export function MessageInput({ roomId, currentUserId, currentUserName }: Message
           />
 
           {/* Message Input and Send Button */}
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <FormField
               control={form.control}
               name="content"
@@ -154,8 +154,8 @@ export function MessageInput({ roomId, currentUserId, currentUserName }: Message
                 <FormItem className="flex-1">
                   <FormControl>
                     <Textarea
-                      placeholder="Type a message..."
-                      className="resize-none text-sm md:text-base"
+                      placeholder="Type a message... (Enter to send)"
+                      className="resize-none text-sm md:text-base min-h-[60px] rounded-xl"
                       rows={2}
                       disabled={sendMessage.isPending}
                       onKeyDown={handleKeyDown}
@@ -171,15 +171,16 @@ export function MessageInput({ roomId, currentUserId, currentUserName }: Message
             />
             <Button
               type="submit"
+              size="lg"
               disabled={sendMessage.isPending || !form.watch('content')?.trim()}
-              className="self-end px-3 md:px-4"
+              className="self-end"
             >
-              {sendMessage.isPending ? 'Sending...' : 'Send'}
+              {sendMessage.isPending ? '📤' : '🚀'}
             </Button>
           </div>
 
           {form.formState.errors.content && (
-            <p className="text-sm text-red-600">
+            <p className="text-sm text-destructive">
               {form.formState.errors.content.message}
             </p>
           )}

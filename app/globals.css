@@ -37,22 +37,29 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 1rem;
   /* Background: Light warm beige/cream (brown base) */
   --background: oklch(0.95 0.03 45);
   /* Foreground: Dark brown for text */
   --foreground: oklch(0.25 0.05 45);
-  /* Card: Brighter cream, almost white */
-  --card: oklch(0.98 0.015 50);
+  /* Card: Brighter cream with glassmorphism */
+  --card: oklch(0.98 0.015 50 / 0.8);
   --card-foreground: oklch(0.25 0.05 45);
-  --popover: oklch(0.98 0.015 50);
+  --popover: oklch(0.98 0.015 50 / 0.95);
   --popover-foreground: oklch(0.25 0.05 45);
   /* Primary: Rose #F43F5E - for buttons and highlights */
   --primary: oklch(0.65 0.24 12);
@@ -67,8 +74,8 @@
   --accent: oklch(0.55 0.15 50);
   --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  /* Border: Brown-tinted */
-  --border: oklch(0.85 0.04 45);
+  /* Border: Brown-tinted with subtle transparency */
+  --border: oklch(0.85 0.04 45 / 0.3);
   --input: oklch(0.88 0.035 45);
   /* Ring: Rose for focus states */
   --ring: oklch(0.65 0.24 12);
@@ -86,16 +93,24 @@
   --sidebar-accent-foreground: oklch(0.25 0.05 45);
   --sidebar-border: oklch(0.85 0.04 45);
   --sidebar-ring: oklch(0.65 0.24 12);
+
+  /* Extended Palette - Rose + Brown Based */
+  --success: oklch(0.7 0.18 160);
+  --success-foreground: oklch(1 0 0);
+  --info: oklch(0.7 0.15 230);
+  --info-foreground: oklch(1 0 0);
+  --warning: oklch(0.68 0.18 60);
+  --warning-foreground: oklch(1 0 0);
 }
 
 .dark {
   /* Background: Dark brown */
   --background: oklch(0.2 0.03 45);
   --foreground: oklch(0.95 0.015 50);
-  /* Card: Slightly lighter dark brown */
-  --card: oklch(0.25 0.025 45);
+  /* Card: Slightly lighter dark brown with glassmorphism */
+  --card: oklch(0.25 0.025 45 / 0.8);
   --card-foreground: oklch(0.95 0.015 50);
-  --popover: oklch(0.25 0.025 45);
+  --popover: oklch(0.25 0.025 45 / 0.95);
   --popover-foreground: oklch(0.95 0.015 50);
   /* Primary: Lighter rose for dark mode */
   --primary: oklch(0.7 0.24 12);
@@ -109,7 +124,8 @@
   --accent: oklch(0.6 0.15 50);
   --accent-foreground: oklch(0.95 0.015 50);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0.35 0.03 45);
+  /* Border: with subtle transparency */
+  --border: oklch(0.35 0.03 45 / 0.3);
   --input: oklch(0.32 0.03 45);
   --ring: oklch(0.7 0.24 12);
   --chart-1: oklch(0.488 0.243 264.376);
@@ -125,6 +141,14 @@
   --sidebar-accent-foreground: oklch(0.95 0.015 50);
   --sidebar-border: oklch(0.35 0.03 45);
   --sidebar-ring: oklch(0.7 0.24 12);
+
+  /* Extended Palette - Dark mode */
+  --success: oklch(0.75 0.18 160);
+  --success-foreground: oklch(0.15 0.02 45);
+  --info: oklch(0.75 0.15 230);
+  --info-foreground: oklch(0.15 0.02 45);
+  --warning: oklch(0.72 0.18 60);
+  --warning-foreground: oklch(0.15 0.02 45);
 }
 
 @layer base {

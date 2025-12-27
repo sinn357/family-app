@@ -48,25 +48,25 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
   ]
 
   return (
-    <nav className="bg-card border-b border-border sticky top-0 z-50 shadow-md">
+    <nav className="bg-card/80 backdrop-blur-xl border-b border-border/50 sticky top-0 z-50 shadow-lg shadow-primary/5">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo and Desktop Navigation */}
           <div className="flex items-center space-x-8">
             <Link
               href="/home"
-              className="text-xl font-bold text-primary hover:text-primary/80 transition-colors"
+              className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent hover:from-primary/80 hover:to-accent/80 transition-all"
             >
               Family App
             </Link>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex space-x-1">
+            <div className="hidden md:flex space-x-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-foreground/80 hover:text-primary hover:bg-primary/5 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  className="text-foreground/80 hover:text-primary hover:bg-gradient-to-br hover:from-primary/10 hover:to-accent/10 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:-translate-y-0.5"
                 >
                   {link.label}
                 </Link>
@@ -78,10 +78,10 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
           <div className="hidden md:flex items-center space-x-4">
             <SearchDialog />
             <NotificationBell userId={member.id} />
-            <span className="text-sm text-foreground/80">
+            <span className="text-sm text-foreground/80 flex items-center gap-2">
               {member.name}
               {member.role === 'ADMIN' && (
-                <span className="ml-2 text-xs bg-primary/15 text-primary px-2 py-1 rounded-full font-medium">
+                <span className="text-xs bg-gradient-to-r from-primary/20 to-accent/20 text-primary px-3 py-1 rounded-full font-medium border border-primary/20">
                   Admin
                 </span>
               )}
@@ -91,7 +91,6 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
               size="sm"
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className="border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground"
             >
               {isLoggingOut ? 'Logging out...' : 'Logout'}
             </Button>
@@ -113,25 +112,25 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden pb-4 border-t border-border mt-2 pt-4">
+          <div className="md:hidden pb-4 border-t border-border/50 mt-2 pt-4 backdrop-blur-xl">
             <div className="flex flex-col space-y-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-foreground/80 hover:text-primary hover:bg-primary/5 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  className="text-foreground/80 hover:text-primary hover:bg-gradient-to-br hover:from-primary/10 hover:to-accent/10 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200"
                 >
                   {link.label}
                 </Link>
               ))}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-border flex flex-col space-y-3">
-              <div className="px-3 text-sm text-foreground/80">
+            <div className="mt-4 pt-4 border-t border-border/50 flex flex-col space-y-3">
+              <div className="px-4 text-sm text-foreground/80 flex items-center gap-2">
                 {member.name}
                 {member.role === 'ADMIN' && (
-                  <span className="ml-2 text-xs bg-primary/15 text-primary px-2 py-1 rounded-full font-medium">
+                  <span className="text-xs bg-gradient-to-r from-primary/20 to-accent/20 text-primary px-3 py-1 rounded-full font-medium border border-primary/20">
                     Admin
                   </span>
                 )}
@@ -141,7 +140,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
                 size="sm"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground w-full"
+                className="w-full"
               >
                 {isLoggingOut ? 'Logging out...' : 'Logout'}
               </Button>

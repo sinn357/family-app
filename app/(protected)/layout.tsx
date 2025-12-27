@@ -16,7 +16,7 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <ProtectedNav member={member} />
       <main>{children}</main>
     </div>
