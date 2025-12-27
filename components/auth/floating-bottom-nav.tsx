@@ -22,7 +22,7 @@ export function FloatingBottomNav() {
         <div className="flex items-center justify-around px-2 py-3">
           {mainLinks.map((link) => {
             const Icon = link.icon
-            const isActive = pathname.startsWith(link.href)
+            const isActive = pathname?.startsWith(link.href) ?? false
 
             return (
               <Link
