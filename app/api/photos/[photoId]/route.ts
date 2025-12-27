@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth'
-import { db } from '@/lib/db'
+import { prisma as db } from '@/lib/db'
 
 // DELETE /api/photos/[photoId] - 사진 삭제
 export async function DELETE(
