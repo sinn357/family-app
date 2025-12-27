@@ -1,6 +1,6 @@
 import { getCurrentMember } from '@/lib/auth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { MessageCircle, FileText, CheckSquare, Calendar, FolderOpen, Settings, Shield } from 'lucide-react'
+import { MessageCircle, FileText, CheckSquare, Calendar, FolderOpen, Settings, Shield, Camera } from 'lucide-react'
 
 export default async function HomePage() {
   const member = await getCurrentMember()
@@ -40,20 +40,28 @@ export default async function HomePage() {
       iconColor: 'text-success',
     },
     {
+      href: '/photos',
+      title: 'Photos',
+      description: 'Family album',
+      icon: Camera,
+      gradient: 'from-info/10 to-info/5',
+      iconColor: 'text-info',
+    },
+    {
       href: '/calendar',
       title: 'Calendar',
       description: 'Schedule and events',
       icon: Calendar,
-      gradient: 'from-info/10 to-info/5',
-      iconColor: 'text-info',
+      gradient: 'from-warning/10 to-warning/5',
+      iconColor: 'text-warning',
     },
     {
       href: '/files',
       title: 'Files',
       description: 'Shared documents',
       icon: FolderOpen,
-      gradient: 'from-warning/10 to-warning/5',
-      iconColor: 'text-warning',
+      gradient: 'from-muted/10 to-muted/5',
+      iconColor: 'text-muted-foreground',
     },
     {
       href: '/settings',

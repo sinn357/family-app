@@ -37,14 +37,15 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
   }
 
   const navLinks = [
-    { href: '/home', label: 'Home' },
-    { href: '/chat', label: 'Chat' },
-    { href: '/board', label: 'Board' },
-    { href: '/todos', label: 'Todos' },
-    { href: '/files', label: 'Files' },
-    { href: '/calendar', label: 'Calendar' },
-    { href: '/settings', label: 'Settings' },
-    ...(member.role === 'ADMIN' ? [{ href: '/admin', label: 'Admin' }] : []),
+    { href: '/home', label: 'Home', emoji: '🏡' },
+    { href: '/chat', label: 'Chat', emoji: '💬' },
+    { href: '/board', label: 'Board', emoji: '📌' },
+    { href: '/todos', label: 'Todos', emoji: '✅' },
+    { href: '/photos', label: 'Photos', emoji: '🌸' },
+    { href: '/files', label: 'Files', emoji: '🗂️' },
+    { href: '/calendar', label: 'Calendar', emoji: '🗓️' },
+    { href: '/settings', label: 'Settings', emoji: '⚙️' },
+    ...(member.role === 'ADMIN' ? [{ href: '/admin', label: 'Admin', emoji: '🛡️' }] : []),
   ]
 
   return (
@@ -60,15 +61,24 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
               Family App
             </Link>
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex space-x-2">
+            {/* Desktop Menu - Bubbly Design */}
+            <div className="hidden md:flex space-x-1.5">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-foreground/80 hover:text-primary hover:bg-gradient-to-br hover:from-primary/10 hover:to-accent/10 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:-translate-y-0.5"
+                  className="group relative flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 active:scale-95"
                 >
-                  {link.label}
+                  {/* Bubbly background */}
+                  <span className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/5 to-accent/5 group-hover:from-primary/15 group-hover:to-accent/15 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/10" />
+
+                  {/* Content */}
+                  <span className="relative text-xl group-hover:animate-bounce">
+                    {link.emoji}
+                  </span>
+                  <span className="relative text-foreground/70 group-hover:text-primary transition-colors hidden lg:inline">
+                    {link.label}
+                  </span>
                 </Link>
               ))}
             </div>
@@ -119,9 +129,12 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-foreground/80 hover:text-primary hover:bg-gradient-to-br hover:from-primary/10 hover:to-accent/10 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200"
+                  className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-br hover:from-primary/10 hover:to-accent/10 text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
                 >
-                  {link.label}
+                  <span className="text-2xl">{link.emoji}</span>
+                  <span className="text-foreground/80 group-hover:text-primary transition-colors">
+                    {link.label}
+                  </span>
                 </Link>
               ))}
             </div>

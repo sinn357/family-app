@@ -31,6 +31,8 @@ model FamilyMember {
   notificationSettings   NotificationSetting?
   uploadedFiles          File[]
   calendarEvents         CalendarEvent[]
+  albums                 Album[]
+  photos                 Photo[]
 
   @@map("family_members")
 }
@@ -74,6 +76,8 @@ model ChatMessage {
   senderId  String
   content   String   @db.Text
   imageUrl  String?  @db.VarChar(500)
+  isDeleted Boolean  @default(false)
+  deletedAt DateTime?
   createdAt DateTime @default(now())
 
   room   ChatRoom     @relation(fields: [roomId], references: [id], onDelete: Cascade)
@@ -231,51 +235,40 @@ model CalendarEvent {
   @@map("calendar_events")
 }
 
-// Phase 2-4에 추가될 모델들 (주석으로 남김)
-/*
-// 캘린더 이벤트
-model CalendarEvent {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  startAt     DateTime
-  endAt       DateTime?
-  createdBy   String
-  status      EventStatus @default(PENDING)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  creator FamilyMember @relation(fields: [createdBy], references: [id])
-}
-
-enum EventStatus {
-  PENDING
-  APPROVED
-}
-
 // 앨범
 model Album {
   id        String   @id @default(cuid())
-  name      String
+  name      String   @db.VarChar(200)
   createdBy String
   createdAt DateTime @default(now())
 
   photos  Photo[]
-  creator FamilyMember @relation(fields: [createdBy], references: [id])
+  creator FamilyMember @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@index([createdBy])
+  @@map("albums")
 }
 
 // 사진
 model Photo {
   id         String   @id @default(cuid())
-  albumId    String
+  albumId    String?
   uploaderId String
-  imageUrl   String
-  caption    String?
+  imageUrl   String   @db.VarChar(1000)
+  caption    String?  @db.Text
   createdAt  DateTime @default(now())
 
-  album    Album        @relation(fields: [albumId], references: [id])
-  uploader FamilyMember @relation(fields: [uploaderId], references: [id])
+  album    Album?       @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  uploader FamilyMember @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  @@index([albumId])
+  @@index([uploaderId])
+  @@index([createdAt])
+  @@map("photos")
 }
+
+// Phase 2-4에 추가될 모델들 (주석으로 남김)
+/*
 
 // 투표
 model Poll {
