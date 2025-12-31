@@ -9,11 +9,11 @@ export function FloatingBottomNav() {
   const pathname = usePathname()
 
   const mainLinks = [
-    { href: '/home', label: 'Home', icon: Home },
-    { href: '/chat', label: 'Chat', icon: MessageCircle },
-    { href: '/photos', label: 'Photos', icon: Camera },
-    { href: '/todos', label: 'Todos', icon: CheckSquare },
-    { href: '/board', label: 'More', icon: Menu },
+    { href: '/home', label: '홈', icon: Home },
+    { href: '/chat', label: '채팅', icon: MessageCircle },
+    { href: '/photos', label: '사진', icon: Camera },
+    { href: '/todos', label: '할일', icon: CheckSquare },
+    { href: '/board', label: '더보기', icon: Menu },
   ]
 
   return (

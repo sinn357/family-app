@@ -37,15 +37,15 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
   }
 
   const navLinks = [
-    { href: '/home', label: 'Home', emoji: '🏡' },
-    { href: '/chat', label: 'Chat', emoji: '💬' },
-    { href: '/board', label: 'Board', emoji: '📌' },
-    { href: '/todos', label: 'Todos', emoji: '✅' },
-    { href: '/photos', label: 'Photos', emoji: '🌸' },
-    { href: '/files', label: 'Files', emoji: '🗂️' },
-    { href: '/calendar', label: 'Calendar', emoji: '🗓️' },
-    { href: '/settings', label: 'Settings', emoji: '⚙️' },
-    ...(member.role === 'ADMIN' ? [{ href: '/admin', label: 'Admin', emoji: '🛡️' }] : []),
+    { href: '/home', label: '홈', emoji: '🏡' },
+    { href: '/chat', label: '채팅', emoji: '💬' },
+    { href: '/board', label: '게시판', emoji: '📌' },
+    { href: '/todos', label: '할일', emoji: '✅' },
+    { href: '/photos', label: '사진', emoji: '🌸' },
+    { href: '/files', label: '파일', emoji: '🗂️' },
+    { href: '/calendar', label: '캘린더', emoji: '🗓️' },
+    { href: '/settings', label: '설정', emoji: '⚙️' },
+    ...(member.role === 'ADMIN' ? [{ href: '/admin', label: '관리자', emoji: '🛡️' }] : []),
   ]
 
   return (
@@ -58,7 +58,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
               href="/home"
               className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent hover:from-primary/80 hover:to-accent/80 transition-all"
             >
-              Family App
+              패밀리 앱
             </Link>
 
             {/* Desktop Menu - Bubbly Design */}
@@ -92,7 +92,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
               {member.name}
               {member.role === 'ADMIN' && (
                 <span className="text-xs bg-gradient-to-r from-primary/20 to-accent/20 text-primary px-3 py-1 rounded-full font-medium border border-primary/20">
-                  Admin
+                  관리자
                 </span>
               )}
             </span>
@@ -102,7 +102,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
               onClick={handleLogout}
               disabled={isLoggingOut}
             >
-              {isLoggingOut ? 'Logging out...' : 'Logout'}
+              {isLoggingOut ? '로그아웃 중...' : '로그아웃'}
             </Button>
           </div>
 
@@ -144,7 +144,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
                 {member.name}
                 {member.role === 'ADMIN' && (
                   <span className="text-xs bg-gradient-to-r from-primary/20 to-accent/20 text-primary px-3 py-1 rounded-full font-medium border border-primary/20">
-                    Admin
+                    관리자
                   </span>
                 )}
               </div>
@@ -155,7 +155,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
                 disabled={isLoggingOut}
                 className="w-full"
               >
-                {isLoggingOut ? 'Logging out...' : 'Logout'}
+                {isLoggingOut ? '로그아웃 중...' : '로그아웃'}
               </Button>
             </div>
           </div>

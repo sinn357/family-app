@@ -7,9 +7,9 @@ export default async function HomePage() {
 
   const getGreeting = () => {
     const hour = new Date().getHours()
-    if (hour < 12) return { text: 'Good Morning', emoji: '🌅' }
-    if (hour < 18) return { text: 'Good Afternoon', emoji: '☀️' }
-    return { text: 'Good Evening', emoji: '🌙' }
+    if (hour < 12) return { text: '좋은 아침', emoji: '🌅' }
+    if (hour < 18) return { text: '좋은 오후', emoji: '☀️' }
+    return { text: '좋은 저녁', emoji: '🌙' }
   }
 
   const greeting = getGreeting()
@@ -17,56 +17,56 @@ export default async function HomePage() {
   const quickActions = [
     {
       href: '/chat',
-      title: 'Chat',
-      description: 'Real-time messaging with family',
+      title: '채팅',
+      description: '가족과 실시간 메시지',
       icon: MessageCircle,
       gradient: 'from-primary/10 to-primary/5',
       iconColor: 'text-primary',
     },
     {
       href: '/board',
-      title: 'Board',
-      description: 'Share posts and updates',
+      title: '게시판',
+      description: '게시글과 소식 공유',
       icon: FileText,
       gradient: 'from-accent/10 to-accent/5',
       iconColor: 'text-accent',
     },
     {
       href: '/todos',
-      title: 'Todos',
-      description: 'Manage family tasks',
+      title: '할일',
+      description: '가족 할일 관리',
       icon: CheckSquare,
       gradient: 'from-success/10 to-success/5',
       iconColor: 'text-success',
     },
     {
       href: '/photos',
-      title: 'Photos',
-      description: 'Family album',
+      title: '사진',
+      description: '가족 앨범',
       icon: Camera,
       gradient: 'from-info/10 to-info/5',
       iconColor: 'text-info',
     },
     {
       href: '/calendar',
-      title: 'Calendar',
-      description: 'Schedule and events',
+      title: '캘린더',
+      description: '일정 및 이벤트 관리',
       icon: Calendar,
       gradient: 'from-warning/10 to-warning/5',
       iconColor: 'text-warning',
     },
     {
       href: '/files',
-      title: 'Files',
-      description: 'Shared documents',
+      title: '파일',
+      description: '공유 문서',
       icon: FolderOpen,
       gradient: 'from-muted/10 to-muted/5',
       iconColor: 'text-muted-foreground',
     },
     {
       href: '/settings',
-      title: 'Settings',
-      description: 'App preferences',
+      title: '설정',
+      description: '앱 환경설정',
       icon: Settings,
       gradient: 'from-muted/10 to-muted/5',
       iconColor: 'text-muted-foreground',
@@ -76,8 +76,8 @@ export default async function HomePage() {
   if (member?.role === 'ADMIN') {
     quickActions.push({
       href: '/admin',
-      title: 'Admin',
-      description: 'Manage members',
+      title: '관리자',
+      description: '멤버 관리',
       icon: Shield,
       gradient: 'from-primary/10 to-accent/10',
       iconColor: 'text-primary',
@@ -95,7 +95,7 @@ export default async function HomePage() {
               {greeting.text}, {member?.name}!
             </h1>
             <p className="text-sm md:text-base text-muted-foreground mt-1">
-              Welcome to your family hub
+              가족 허브에 오신 것을 환영합니다
             </p>
           </div>
         </div>
@@ -121,7 +121,7 @@ export default async function HomePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2 text-sm font-medium text-primary group-hover:gap-3 transition-all">
-                    <span>Open</span>
+                    <span>열기</span>
                     <span className="group-hover:translate-x-1 transition-transform">→</span>
                   </div>
                 </CardContent>
@@ -134,7 +134,7 @@ export default async function HomePage() {
       {/* Footer Note */}
       <div className="mt-12 text-center">
         <p className="text-sm text-muted-foreground">
-          Built with love for the family ❤️
+          가족을 위해 사랑으로 만들었어요 ❤️
         </p>
       </div>
     </div>
