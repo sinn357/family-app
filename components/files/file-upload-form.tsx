@@ -18,7 +18,7 @@ export function FileUploadForm({ onSuccess }: FileUploadFormProps) {
     e.preventDefault()
 
     if (!file) {
-      toast.error('Please select a file')
+      toast.error('파일을 선택하세요')
       return
     }
 
@@ -38,16 +38,16 @@ export function FileUploadForm({ onSuccess }: FileUploadFormProps) {
 
       if (!res.ok) {
         const error = await res.json()
-        throw new Error(error.error || 'Upload failed')
+        throw new Error(error.error || '업로드 실패')
       }
 
-      toast.success('File uploaded successfully')
+      toast.success('파일이 업로드되었습니다!')
       setFile(null)
       setDescription('')
       onSuccess?.()
     } catch (error) {
       console.error('Upload error:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to upload file')
+      toast.error(error instanceof Error ? error.message : '파일 업로드 실패')
     } finally {
       setIsUploading(false)
     }
@@ -57,7 +57,7 @@ export function FileUploadForm({ onSuccess }: FileUploadFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-sm font-medium mb-2">
-          Select File (PDF or Document)
+          파일 선택 (PDF 또는 문서)
         </label>
         <input
           type="file"
@@ -67,19 +67,19 @@ export function FileUploadForm({ onSuccess }: FileUploadFormProps) {
         />
         {file && (
           <p className="mt-2 text-sm text-gray-600">
-            Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+            선택됨: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
           </p>
         )}
       </div>
 
       <div>
         <label className="block text-sm font-medium mb-2">
-          Description (optional)
+          설명 (선택)
         </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Add a description for this file..."
+          placeholder="파일 설명을 입력하세요..."
           className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           rows={3}
         />
@@ -91,7 +91,7 @@ export function FileUploadForm({ onSuccess }: FileUploadFormProps) {
         className="w-full"
       >
         <Upload className="h-4 w-4 mr-2" />
-        {isUploading ? 'Uploading...' : 'Upload File'}
+        {isUploading ? '업로드 중...' : '파일 업로드'}
       </Button>
     </form>
   )

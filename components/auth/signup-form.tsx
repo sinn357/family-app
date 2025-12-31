@@ -47,18 +47,18 @@ export function SignupForm() {
       const result = await res.json()
 
       if (!res.ok) {
-        const message = result.error || 'Signup failed'
+        const message = result.error || '회원가입 실패'
         setError(message)
         toast.error(message)
         return
       }
 
       // Signup successful - redirect to home
-      toast.success('Account created successfully!')
+      toast.success('계정이 생성되었습니다!')
       router.push('/home')
       router.refresh()
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'An error occurred'
+      const message = err instanceof Error ? err.message : '오류가 발생했습니다'
       setError(message)
       toast.error(message)
     } finally {
@@ -80,10 +80,10 @@ export function SignupForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>이름</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter your name"
+                  placeholder="이름을 입력하세요"
                   autoComplete="username"
                   disabled={isLoading}
                   {...field}
@@ -99,11 +99,11 @@ export function SignupForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>비밀번호</FormLabel>
               <FormControl>
                 <Input
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="비밀번호를 입력하세요"
                   autoComplete="new-password"
                   disabled={isLoading}
                   {...field}
@@ -119,11 +119,11 @@ export function SignupForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel>비밀번호 확인</FormLabel>
               <FormControl>
                 <Input
                   type="password"
-                  placeholder="Confirm your password"
+                  placeholder="비밀번호를 다시 입력하세요"
                   autoComplete="new-password"
                   disabled={isLoading}
                   {...field}
@@ -135,7 +135,7 @@ export function SignupForm() {
         />
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Creating account...' : 'Sign Up'}
+          {isLoading ? '계정 생성 중...' : '회원가입'}
         </Button>
       </form>
     </Form>

@@ -66,7 +66,7 @@ export function PostList() {
   if (error) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-destructive">Error loading posts: {error.message}</p>
+        <p className="text-destructive">게시글을 불러오는 중 오류가 발생했습니다: {error.message}</p>
       </div>
     )
   }
@@ -82,7 +82,7 @@ export function PostList() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search posts by title or content..."
+              placeholder="제목 또는 내용으로 게시글 검색..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 pr-10"
@@ -100,17 +100,17 @@ export function PostList() {
 
         <EmptyState
           icon={MessageSquare}
-          title={debouncedSearch ? "No posts found" : "No posts yet"}
+          title={debouncedSearch ? "게시글을 찾을 수 없습니다" : "게시글이 아직 없습니다"}
           description={
             debouncedSearch
-              ? `No posts match "${debouncedSearch}". Try a different search.`
-              : "Be the first to share something with your family! Create a new post to get started."
+              ? `"${debouncedSearch}"와(과) 일치하는 게시글이 없습니다. 다른 검색어를 시도해보세요.`
+              : "가족과 첫 게시글을 공유해보세요! 새 게시글을 작성해 시작하세요."
           }
           action={
             !debouncedSearch && (
               <Link href="/board/new">
                 <Button className="bg-primary hover:bg-primary/90">
-                  Create First Post
+                  첫 게시글 작성
                 </Button>
               </Link>
             )
@@ -127,7 +127,7 @@ export function PostList() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search posts by title or content..."
+            placeholder="제목 또는 내용으로 게시글 검색..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10 pr-10"
@@ -157,7 +157,7 @@ export function PostList() {
           {isFetchingNextPage && (
             <div className="flex items-center gap-2 text-muted-foreground">
               <Loader2 className="h-5 w-5 animate-spin" />
-              <span>Loading more posts...</span>
+              <span>게시글을 더 불러오는 중...</span>
             </div>
           )}
         </div>
@@ -167,7 +167,7 @@ export function PostList() {
       {!hasNextPage && posts.length > 0 && (
         <div className="flex items-center justify-center py-8">
           <p className="text-sm text-muted-foreground">
-            You've reached the end of the posts
+            게시글 끝에 도달했습니다
           </p>
         </div>
       )}

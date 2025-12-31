@@ -102,7 +102,7 @@ export function MessageInput({ roomId, currentUserId, currentUserName }: Message
       await sendMessage.mutateAsync(data)
       form.reset()
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to send message'
+      const message = err instanceof Error ? err.message : '메시지 전송 실패'
       setError(message)
       toast.error(message)
     }
@@ -132,7 +132,7 @@ export function MessageInput({ roomId, currentUserId, currentUserName }: Message
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-xs font-medium text-muted-foreground">
-                  📎 Attach Image (Optional)
+                  📎 이미지 첨부 (선택)
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -154,7 +154,7 @@ export function MessageInput({ roomId, currentUserId, currentUserName }: Message
                 <FormItem className="flex-1">
                   <FormControl>
                     <Textarea
-                      placeholder="Type a message... (Enter to send)"
+                      placeholder="메시지를 입력하세요... (Enter로 전송)"
                       className="resize-none text-sm md:text-base min-h-[60px] rounded-xl"
                       rows={2}
                       disabled={sendMessage.isPending}

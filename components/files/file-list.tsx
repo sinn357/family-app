@@ -39,7 +39,7 @@ export function FileList({ refreshTrigger, currentUserId }: FileListProps) {
       }
     } catch (error) {
       console.error('Failed to fetch files:', error)
-      toast.error('Failed to load files')
+      toast.error('파일을 불러오지 못했습니다')
     } finally {
       setIsLoading(false)
     }
@@ -50,7 +50,7 @@ export function FileList({ refreshTrigger, currentUserId }: FileListProps) {
   }, [refreshTrigger])
 
   const handleDelete = async (fileId: string) => {
-    if (!confirm('Are you sure you want to delete this file?')) return
+    if (!confirm('이 파일을 삭제하시겠습니까?')) return
 
     try {
       const res = await fetch(`/api/files/${fileId}`, {
@@ -58,14 +58,14 @@ export function FileList({ refreshTrigger, currentUserId }: FileListProps) {
       })
 
       if (!res.ok) {
-        throw new Error('Delete failed')
+        throw new Error('삭제 실패')
       }
 
-      toast.success('File deleted successfully')
+      toast.success('파일이 삭제되었습니다!')
       fetchFiles()
     } catch (error) {
       console.error('Delete error:', error)
-      toast.error('Failed to delete file')
+      toast.error('파일 삭제 실패')
     }
   }
 
@@ -76,13 +76,13 @@ export function FileList({ refreshTrigger, currentUserId }: FileListProps) {
   }
 
   if (isLoading) {
-    return <div className="text-center py-8 text-gray-500">Loading files...</div>
+    return <div className="text-center py-8 text-gray-500">파일을 불러오는 중...</div>
   }
 
   if (files.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        No files uploaded yet
+        아직 업로드된 파일이 없습니다
       </div>
     )
   }

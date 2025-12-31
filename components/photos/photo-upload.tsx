@@ -22,7 +22,7 @@ export function PhotoUpload({ onSuccess }: PhotoUploadProps) {
     e.preventDefault()
 
     if (!imageUrl) {
-      toast.error('Please upload an image')
+      toast.error('이미지를 업로드하세요')
       return
     }
 
@@ -32,13 +32,13 @@ export function PhotoUpload({ onSuccess }: PhotoUploadProps) {
         caption: caption || undefined,
       })
 
-      toast.success('Photo uploaded successfully!')
+      toast.success('사진이 업로드되었습니다!')
       setImageUrl('')
       setCaption('')
       onSuccess()
     } catch (error) {
       console.error('Upload error:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to upload photo')
+      toast.error(error instanceof Error ? error.message : '사진 업로드 실패')
     }
   }
 
@@ -46,7 +46,7 @@ export function PhotoUpload({ onSuccess }: PhotoUploadProps) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <Label htmlFor="image" className="text-sm font-medium mb-2 block">
-          Photo Image *
+          사진 *
         </Label>
         <ImageUpload
           value={imageUrl}
@@ -57,11 +57,11 @@ export function PhotoUpload({ onSuccess }: PhotoUploadProps) {
 
       <div>
         <Label htmlFor="caption" className="text-sm font-medium mb-2 block">
-          Caption (Optional)
+          캡션 (선택)
         </Label>
         <Textarea
           id="caption"
-          placeholder="Add a caption to your photo..."
+          placeholder="사진 캡션을 입력하세요..."
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
           disabled={uploadPhoto.isPending}
@@ -76,10 +76,10 @@ export function PhotoUpload({ onSuccess }: PhotoUploadProps) {
           onClick={onSuccess}
           disabled={uploadPhoto.isPending}
         >
-          Cancel
+          취소
         </Button>
         <Button type="submit" disabled={uploadPhoto.isPending || !imageUrl}>
-          {uploadPhoto.isPending ? 'Uploading...' : 'Upload Photo'}
+          {uploadPhoto.isPending ? '업로드 중...' : '사진 업로드'}
         </Button>
       </div>
     </form>

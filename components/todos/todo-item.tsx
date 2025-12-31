@@ -41,24 +41,24 @@ export function TodoItem({ todo, currentUserId }: TodoItemProps) {
         todoId: todo.id,
         isDone: !todo.isDone,
       })
-      toast.success(todo.isDone ? 'Todo marked as incomplete' : 'Todo completed!')
+      toast.success(todo.isDone ? '할일이 미완료로 변경되었습니다' : '할일이 완료되었습니다!')
     } catch (err) {
       console.error('Failed to toggle todo:', err)
-      toast.error('Failed to update todo')
+      toast.error('할일 업데이트 실패')
     }
   }
 
   async function handleDelete() {
-    if (!confirm('Are you sure you want to delete this todo?')) {
+    if (!confirm('이 할일을 삭제하시겠습니까?')) {
       return
     }
 
     try {
       setIsDeleting(true)
       await deleteTodo.mutateAsync(todo.id)
-      toast.success('Todo deleted successfully!')
+      toast.success('할일이 삭제되었습니다!')
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete todo. Only the creator can delete.'
+      const message = err instanceof Error ? err.message : '할일 삭제 실패. 작성자만 삭제할 수 있습니다.'
       console.error('Failed to delete todo:', err)
       toast.error(message)
       setIsDeleting(false)

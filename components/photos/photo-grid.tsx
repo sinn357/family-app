@@ -25,7 +25,7 @@ export function PhotoGrid() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-destructive">Failed to load photos</p>
+        <p className="text-destructive">사진을 불러오지 못했습니다</p>
       </div>
     )
   }
@@ -36,9 +36,9 @@ export function PhotoGrid() {
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center mx-auto mb-4">
           <span className="text-4xl">📷</span>
         </div>
-        <p className="text-muted-foreground text-lg">No photos yet</p>
+        <p className="text-muted-foreground text-lg">아직 사진이 없습니다</p>
         <p className="text-muted-foreground text-sm mt-1">
-          Upload your first family photo!
+          첫 가족 사진을 업로드해보세요!
         </p>
       </div>
     )

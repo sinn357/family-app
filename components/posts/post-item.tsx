@@ -94,7 +94,7 @@ function PostItemComponent({ post }: PostItemProps) {
               )}
             </div>
             <span className="text-xs text-primary font-medium group-hover:translate-x-1 transition-transform">
-              Read more →
+              더 보기 →
             </span>
           </div>
         </CardContent>

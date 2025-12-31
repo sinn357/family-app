@@ -69,7 +69,7 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
   if (error) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-destructive">Error loading todos: {error.message}</p>
+        <p className="text-destructive">할일을 불러오는 중 오류가 발생했습니다: {error.message}</p>
       </div>
     )
   }
@@ -81,26 +81,26 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
     const getEmptyMessage = () => {
       if (debouncedSearch) {
         return {
-          title: 'No todos found',
-          description: `No todos match "${debouncedSearch}". Try a different search.`,
+          title: '할일을 찾을 수 없습니다',
+          description: `"${debouncedSearch}"와(과) 일치하는 할일이 없습니다. 다른 검색어를 시도해보세요.`,
         }
       }
 
       switch (filter) {
         case 'assignedToMe':
           return {
-            title: 'No tasks assigned to you',
-            description: 'You\'re all caught up! No tasks are currently assigned to you.',
+            title: '할당된 할일이 없습니다',
+            description: '모두 처리했습니다! 현재 할당된 할일이 없습니다.',
           }
         case 'createdByMe':
           return {
-            title: 'You haven\'t created any todos',
-            description: 'Create a new todo to organize tasks for your family.',
+            title: '작성한 할일이 없습니다',
+            description: '가족 할일을 정리하려면 새 할일을 추가하세요.',
           }
         default:
           return {
-            title: 'No todos yet',
-            description: 'Create your first todo to start organizing family tasks.',
+            title: '할일이 아직 없습니다',
+            description: '가족 할일 정리를 시작하려면 첫 할일을 추가하세요.',
           }
       }
     }
@@ -114,7 +114,7 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search todos by title or description..."
+              placeholder="제목 또는 설명으로 할일 검색..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 pr-10"
@@ -146,7 +146,7 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search todos by title or description..."
+            placeholder="제목 또는 설명으로 할일 검색..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10 pr-10"
@@ -176,7 +176,7 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
           {isFetchingNextPage && (
             <div className="flex items-center gap-2 text-muted-foreground">
               <Loader2 className="h-5 w-5 animate-spin" />
-              <span>Loading more todos...</span>
+              <span>할일을 더 불러오는 중...</span>
             </div>
           )}
         </div>
@@ -186,7 +186,7 @@ export function TodoList({ filter, currentUserId }: TodoListProps) {
       {!hasNextPage && todos.length > 0 && (
         <div className="flex items-center justify-center py-6">
           <p className="text-sm text-muted-foreground">
-            You've reached the end of the todos
+            할일 목록의 끝에 도달했습니다
           </p>
         </div>
       )}

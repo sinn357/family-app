@@ -180,7 +180,7 @@ export function CalendarView({ onDateClick, onEventClick, onAddEvent }: Calendar
               ))}
               {dayEvents.length > 2 && (
                 <div className="text-xs text-gray-500">
-                  +{dayEvents.length - 2} more
+                  +{dayEvents.length - 2}개 더
                 </div>
               )}
             </div>
@@ -204,7 +204,7 @@ export function CalendarView({ onDateClick, onEventClick, onAddEvent }: Calendar
       {renderHeader()}
       {renderDays()}
       {isLoading ? (
-        <div className="text-center py-12 text-gray-500">Loading...</div>
+        <div className="text-center py-12 text-gray-500">로딩 중...</div>
       ) : (
         renderCells()
       )}

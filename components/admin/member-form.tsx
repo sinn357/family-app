@@ -72,7 +72,7 @@ export function MemberForm({ member, onSuccess }: MemberFormProps) {
         }
 
         if (Object.keys(updateData).length === 0) {
-          setError('No changes to update')
+          setError('수정할 내용이 없습니다')
           return
         }
 
@@ -83,7 +83,7 @@ export function MemberForm({ member, onSuccess }: MemberFormProps) {
       form.reset()
       onSuccess?.()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Operation failed')
+      setError(err instanceof Error ? err.message : '작업 실패')
     }
   }
 
@@ -103,10 +103,10 @@ export function MemberForm({ member, onSuccess }: MemberFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>이름</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter member name"
+                  placeholder="멤버 이름을 입력하세요"
                   disabled={isPending}
                   {...field}
                 />
@@ -122,12 +122,12 @@ export function MemberForm({ member, onSuccess }: MemberFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Password {isEditing && '(leave blank to keep current)'}
+                비밀번호 {isEditing && '(기존 유지하려면 비워두세요)'}
               </FormLabel>
               <FormControl>
                 <Input
                   type="password"
-                  placeholder={isEditing ? 'Enter new password' : 'Enter password'}
+                  placeholder={isEditing ? '새 비밀번호를 입력하세요' : '비밀번호를 입력하세요'}
                   disabled={isPending}
                   {...field}
                 />
@@ -143,7 +143,7 @@ export function MemberForm({ member, onSuccess }: MemberFormProps) {
             name="role"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Role</FormLabel>
+                <FormLabel>역할</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -151,12 +151,12 @@ export function MemberForm({ member, onSuccess }: MemberFormProps) {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select role" />
+                      <SelectValue placeholder="역할 선택" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="MEMBER">Member</SelectItem>
-                    <SelectItem value="ADMIN">Admin</SelectItem>
+                    <SelectItem value="MEMBER">멤버</SelectItem>
+                    <SelectItem value="ADMIN">관리자</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -168,11 +168,11 @@ export function MemberForm({ member, onSuccess }: MemberFormProps) {
         <Button type="submit" disabled={isPending}>
           {isPending
             ? isEditing
-              ? 'Updating...'
-              : 'Creating...'
+              ? '업데이트 중...'
+              : '생성 중...'
             : isEditing
-            ? 'Update Member'
-            : 'Create Member'}
+            ? '멤버 수정'
+            : '멤버 생성'}
         </Button>
       </form>
     </Form>

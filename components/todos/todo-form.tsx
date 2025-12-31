@@ -66,11 +66,11 @@ export function TodoForm({ onSuccess }: TodoFormProps) {
     try {
       setError(null)
       await createTodo.mutateAsync(data)
-      toast.success('Todo created successfully!')
+      toast.success('할일이 추가되었습니다!')
       form.reset()
       onSuccess?.()
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create todo'
+      const message = err instanceof Error ? err.message : '할일 추가 실패'
       setError(message)
       toast.error(message)
     }
@@ -90,10 +90,10 @@ export function TodoForm({ onSuccess }: TodoFormProps) {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>제목</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter todo title"
+                  placeholder="할일 제목을 입력하세요"
                   disabled={createTodo.isPending}
                   {...field}
                 />
@@ -108,10 +108,10 @@ export function TodoForm({ onSuccess }: TodoFormProps) {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description (optional)</FormLabel>
+              <FormLabel>설명 (선택)</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Add details..."
+                  placeholder="세부사항을 입력하세요..."
                   rows={3}
                   disabled={createTodo.isPending}
                   {...field}
@@ -127,7 +127,7 @@ export function TodoForm({ onSuccess }: TodoFormProps) {
           name="assignedTo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Assign to (optional)</FormLabel>
+              <FormLabel>담당자 (선택)</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value}
@@ -135,11 +135,11 @@ export function TodoForm({ onSuccess }: TodoFormProps) {
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a family member" />
+                    <SelectValue placeholder="가족 구성원 선택" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="unassigned">Unassigned</SelectItem>
+                  <SelectItem value="unassigned">미할당</SelectItem>
                   {members.map((member) => (
                     <SelectItem key={member.id} value={member.id}>
                       {member.name}
@@ -153,7 +153,7 @@ export function TodoForm({ onSuccess }: TodoFormProps) {
         />
 
         <Button type="submit" disabled={createTodo.isPending}>
-          {createTodo.isPending ? 'Creating...' : 'Create Todo'}
+          {createTodo.isPending ? '추가 중...' : '할일 추가'}
         </Button>
       </form>
     </Form>

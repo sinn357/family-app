@@ -39,10 +39,10 @@ export function PostForm() {
     try {
       setError(null)
       const result = await createPost.mutateAsync(data)
-      toast.success('Post created successfully!')
+      toast.success('게시글이 작성되었습니다!')
       router.push(`/board/${result.post.id}`)
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create post'
+      const message = err instanceof Error ? err.message : '게시글 작성 실패'
       setError(message)
       toast.error(message)
     }
@@ -62,10 +62,10 @@ export function PostForm() {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>제목</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter post title"
+                  placeholder="게시글 제목을 입력하세요"
                   disabled={createPost.isPending}
                   {...field}
                 />
@@ -80,10 +80,10 @@ export function PostForm() {
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Content</FormLabel>
+              <FormLabel>내용</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Write your post..."
+                  placeholder="내용을 작성하세요..."
                   rows={10}
                   disabled={createPost.isPending}
                   {...field}
@@ -99,7 +99,7 @@ export function PostForm() {
           name="imageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image (Optional)</FormLabel>
+              <FormLabel>이미지 (선택)</FormLabel>
               <FormControl>
                 <ImageUpload
                   value={field.value || undefined}
@@ -114,7 +114,7 @@ export function PostForm() {
 
         <div className="flex gap-2">
           <Button type="submit" disabled={createPost.isPending}>
-            {createPost.isPending ? 'Creating...' : 'Create Post'}
+            {createPost.isPending ? '작성 중...' : '게시글 작성'}
           </Button>
           <Button
             type="button"
@@ -122,7 +122,7 @@ export function PostForm() {
             onClick={() => router.push('/board')}
             disabled={createPost.isPending}
           >
-            Cancel
+            취소
           </Button>
         </div>
       </form>

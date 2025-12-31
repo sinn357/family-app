@@ -44,7 +44,7 @@ export function MessageItem({ message, isCurrentUser }: MessageItemProps) {
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Failed to delete message')
+        throw new Error(data.error || '메시지 삭제 실패')
       }
 
       toast.success('메시지가 삭제되었습니다')
@@ -124,7 +124,7 @@ export function MessageItem({ message, isCurrentUser }: MessageItemProps) {
                 <div className="relative w-full mb-3 rounded-xl overflow-hidden">
                   <Image
                     src={message.imageUrl}
-                    alt="Attached image"
+                    alt="첨부 이미지"
                     width={300}
                     height={200}
                     className="object-cover rounded-xl w-full h-auto"

@@ -55,7 +55,7 @@ function CommentItemComponent({ comment, postId, currentUserId }: CommentItemPro
 
   const handleSaveEdit = useCallback(async () => {
     if (!editContent.trim()) {
-      toast.error('Comment cannot be empty')
+      toast.error('댓글을 입력하세요')
       return
     }
 
@@ -64,25 +64,25 @@ function CommentItemComponent({ comment, postId, currentUserId }: CommentItemPro
         commentId: comment.id,
         data: { content: editContent },
       })
-      toast.success('Comment updated successfully!')
+      toast.success('댓글이 수정되었습니다!')
       setIsEditing(false)
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to update comment'
+      const message = err instanceof Error ? err.message : '댓글 수정 실패'
       console.error('Failed to update comment:', err)
       toast.error(message)
     }
   }, [editContent, updateComment, comment.id])
 
   const handleDelete = useCallback(async () => {
-    if (!confirm('Are you sure you want to delete this comment?')) {
+    if (!confirm('이 댓글을 삭제하시겠습니까?')) {
       return
     }
 
     try {
       await deleteComment.mutateAsync(comment.id)
-      toast.success('Comment deleted successfully!')
+      toast.success('댓글이 삭제되었습니다!')
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete comment'
+      const message = err instanceof Error ? err.message : '댓글 삭제 실패'
       console.error('Failed to delete comment:', err)
       toast.error(message)
     }
@@ -133,7 +133,7 @@ function CommentItemComponent({ comment, postId, currentUserId }: CommentItemPro
               disabled={updateComment.isPending}
             >
               <X className="h-4 w-4 mr-1" />
-              Cancel
+              취소
             </Button>
             <Button
               variant="default"
@@ -141,7 +141,7 @@ function CommentItemComponent({ comment, postId, currentUserId }: CommentItemPro
               onClick={handleSaveEdit}
               disabled={updateComment.isPending}
             >
-              {updateComment.isPending ? 'Saving...' : 'Save'}
+              {updateComment.isPending ? '저장 중...' : '저장'}
             </Button>
           </div>
         </div>
@@ -151,7 +151,7 @@ function CommentItemComponent({ comment, postId, currentUserId }: CommentItemPro
             <div className="relative w-full h-48 mb-3 rounded-lg overflow-hidden">
               <Image
                 src={comment.imageUrl}
-                alt="Comment attachment"
+                alt="댓글 첨부 이미지"
                 fill
                 className="object-cover"
               />

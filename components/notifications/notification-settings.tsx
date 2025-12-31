@@ -56,7 +56,7 @@ export function NotificationSettings() {
       if (res.ok) {
         toast.success('알림 설정이 저장되었습니다')
       } else {
-        throw new Error('Failed to save settings')
+        throw new Error('저장 실패')
       }
     } catch (error) {
       console.error('Failed to save settings:', error)

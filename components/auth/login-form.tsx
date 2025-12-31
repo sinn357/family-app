@@ -46,18 +46,18 @@ export function LoginForm() {
       const result = await res.json()
 
       if (!res.ok) {
-        const message = result.error || 'Login failed'
+        const message = result.error || '로그인 실패'
         setError(message)
         toast.error(message)
         return
       }
 
       // Login successful - redirect to home
-      toast.success('Login successful!')
+      toast.success('로그인 성공!')
       router.push('/home')
       router.refresh()
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'An error occurred'
+      const message = err instanceof Error ? err.message : '오류가 발생했습니다'
       setError(message)
       toast.error(message)
     } finally {
@@ -79,10 +79,10 @@ export function LoginForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>이름</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter your name"
+                  placeholder="이름을 입력하세요"
                   autoComplete="username"
                   disabled={isLoading}
                   {...field}
@@ -98,11 +98,11 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>비밀번호</FormLabel>
               <FormControl>
                 <Input
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="비밀번호를 입력하세요"
                   autoComplete="current-password"
                   disabled={isLoading}
                   {...field}
@@ -114,7 +114,7 @@ export function LoginForm() {
         />
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Logging in...' : 'Login'}
+          {isLoading ? '로그인 중...' : '로그인'}
         </Button>
       </form>
     </Form>

@@ -50,14 +50,14 @@ export function PhotoCard({ photo, onClick }: PhotoCardProps) {
   async function handleDelete(e: React.MouseEvent) {
     e.stopPropagation()
 
-    if (!confirm('Delete this photo?')) return
+    if (!confirm('이 사진을 삭제하시겠습니까?')) return
 
     try {
       await deletePhoto.mutateAsync(photo.id)
-      toast.success('Photo deleted')
+      toast.success('사진이 삭제되었습니다')
     } catch (error) {
       console.error('Delete error:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to delete')
+      toast.error(error instanceof Error ? error.message : '삭제 실패')
     }
   }
 
@@ -70,7 +70,7 @@ export function PhotoCard({ photo, onClick }: PhotoCardProps) {
     >
       <Image
         src={photo.imageUrl}
-        alt={photo.caption || 'Family photo'}
+        alt={photo.caption || '가족 사진'}
         fill
         className="object-cover group-hover:scale-105 transition-transform duration-300"
       />

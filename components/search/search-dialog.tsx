@@ -92,7 +92,7 @@ export function SearchDialog() {
                 <Search className="h-5 w-5 text-gray-400 mr-3" />
                 <input
                   type="text"
-                  placeholder="Search posts, comments, todos..."
+                  placeholder="게시글, 댓글, 할일 검색..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className="flex-1 bg-transparent outline-none text-sm"
@@ -112,11 +112,11 @@ export function SearchDialog() {
               <div className="max-h-[60vh] overflow-y-auto">
                 {isLoading ? (
                   <div className="p-8 text-center text-sm text-gray-500">
-                    Searching...
+                    검색 중...
                   </div>
                 ) : query.trim().length < 2 ? (
                   <div className="p-8 text-center text-sm text-gray-500">
-                    Type at least 2 characters to search
+                    검색하려면 2자 이상 입력하세요
                   </div>
                 ) : results ? (
                   <SearchResults results={results} onClose={() => setIsOpen(false)} />
@@ -125,8 +125,8 @@ export function SearchDialog() {
 
               {/* Keyboard Hint */}
               <div className="border-t px-4 py-2 text-xs text-gray-500 flex items-center justify-between">
-                <span>Press ESC to close</span>
-                <span className="hidden sm:inline">⌘K to open</span>
+                <span>ESC를 눌러 닫기</span>
+                <span className="hidden sm:inline">⌘K로 열기</span>
               </div>
             </div>
           </div>
