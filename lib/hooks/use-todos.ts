@@ -35,6 +35,31 @@ export function useTodos(filter?: 'all' | 'assignedToMe' | 'createdByMe', search
 }
 
 /**
+ * Get todos for calendar view (single page)
+ */
+export function useTodosCalendar(filter?: 'all' | 'assignedToMe' | 'createdByMe') {
+  return useQuery({
+    queryKey: ['todos-calendar', filter],
+    queryFn: async () => {
+      const url = new URL('/api/todos', window.location.origin)
+      url.searchParams.set('view', 'calendar')
+      url.searchParams.set('limit', '500')
+      if (filter && filter !== 'all') {
+        url.searchParams.set('filter', filter)
+      }
+
+      const res = await fetch(url.toString(), {
+        credentials: 'include',
+      })
+      if (!res.ok) {
+        await handleApiError(res)
+      }
+      return res.json()
+    },
+  })
+}
+
+/**
  * Create a new todo
  */
 export function useCreateTodo() {

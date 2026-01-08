@@ -22,6 +22,8 @@ model FamilyMember {
   // Relations
   sessions               Session[]
   chatMessages           ChatMessage[]
+  messageReads           MessageRead[]
+  messageReactions       MessageReaction[]
   posts                  Post[]
   comments               Comment[]
   todos                  Todo[]
@@ -76,17 +78,60 @@ model ChatMessage {
   senderId  String
   content   String   @db.Text
   imageUrl  String?  @db.VarChar(500)
+  mediaUrls String[] @default([])
+  mediaTypes String[] @default([])
   isDeleted Boolean  @default(false)
   deletedAt DateTime?
+  replyToId String?
+  isEdited  Boolean  @default(false)
+  editedAt  DateTime?
   createdAt DateTime @default(now())
 
-  room   ChatRoom     @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  sender FamilyMember @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  room      ChatRoom           @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender    FamilyMember       @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  replyTo   ChatMessage?       @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies   ChatMessage[]      @relation("MessageReplies")
+  reads     MessageRead[]
+  reactions MessageReaction[]
 
   @@index([roomId])
   @@index([senderId])
+  @@index([replyToId])
   @@index([createdAt])
   @@map("chat_messages")
+}
+
+// 메시지 읽음 표시
+model MessageRead {
+  id        String   @id @default(cuid())
+  messageId String
+  readerId  String
+  readAt    DateTime @default(now())
+
+  message ChatMessage   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  reader  FamilyMember  @relation(fields: [readerId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, readerId])
+  @@index([messageId])
+  @@index([readerId])
+  @@map("message_reads")
+}
+
+// 메시지 이모지 리액션
+model MessageReaction {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  emoji     String   @db.VarChar(10)
+  createdAt DateTime @default(now())
+
+  message ChatMessage   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    FamilyMember  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+  @@index([userId])
+  @@map("message_reactions")
 }
 
 // 게시글
@@ -130,6 +175,8 @@ model Todo {
   title       String   @db.VarChar(300)
   description String?  @db.Text
   isDone      Boolean  @default(false)
+  dueDate     DateTime?
+  priority    Priority @default(MEDIUM)
   createdBy   String
   assignedTo  String?
   createdAt   DateTime @default(now())
@@ -141,6 +188,13 @@ model Todo {
   @@index([createdBy])
   @@index([assignedTo])
   @@map("todos")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
 
 // Phase 4: 알림 시스템

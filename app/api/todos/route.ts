@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
     const cursor = searchParams.get('cursor')
     const limit = parseInt(searchParams.get('limit') || '20', 10)
     const search = searchParams.get('search')
+    const view = searchParams.get('view')
 
     let whereClause: any = {}
 
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     const todos = await prisma.todo.findMany({
       take: limit + 1, // Fetch one extra to check if there are more
-      ...(cursor && {
+      ...(cursor && view !== 'calendar' && {
         cursor: {
           id: cursor,
         },
@@ -62,10 +63,15 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: [
-        { isDone: 'asc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: view === 'calendar'
+        ? [
+            { dueDate: 'asc' },
+            { createdAt: 'desc' },
+          ]
+        : [
+            { isDone: 'asc' },
+            { createdAt: 'desc' },
+          ],
     })
 
     let nextCursor: string | undefined = undefined
@@ -100,6 +106,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validated = createTodoSchema.parse(body)
 
+    const dueDate = validated.dueDate ? new Date(validated.dueDate) : null
+
     // Create todo
     const todo = await prisma.todo.create({
       data: {
@@ -107,6 +115,8 @@ export async function POST(request: NextRequest) {
         description: validated.description,
         createdBy: member.id,
         assignedTo: validated.assignedTo || null,
+        dueDate,
+        priority: validated.priority || 'MEDIUM',
       },
       include: {
         creator: {

@@ -8,20 +8,43 @@ import { MessageItem } from './message-item'
 import { TypingIndicator } from './typing-indicator'
 import { EmptyState } from '@/components/ui/empty-state'
 import { MessageListSkeleton } from './message-skeleton'
+import { DateSeparator } from './date-separator'
 import { MessageCircle } from 'lucide-react'
+import { isSameDay } from 'date-fns'
 
 interface MessageListProps {
   roomId: string
   currentUserId: string
+  onReply?: (message: any) => void
+  onRetry?: (message: any) => void
 }
 
-export function MessageList({ roomId, currentUserId }: MessageListProps) {
+export function MessageList({ roomId, currentUserId, onReply, onRetry }: MessageListProps) {
   const { data, isLoading, error } = useChatMessages(roomId)
   const { socket, isConnected } = useSocket()
   const queryClient = useQueryClient()
   const bottomRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const [typingUsers, setTypingUsers] = useState<Array<{ userId: string; userName: string }>>([])
+  const [typingUsers, setTypingUsers] = useState<Array<{ userId: string; userName: string }>>([ ])
+  const [totalMembers, setTotalMembers] = useState(5) // Default 5 (4 members + 1 admin)
+
+  // Get total family members count
+  useEffect(() => {
+    async function fetchMembersCount() {
+      try {
+        const res = await fetch('/api/admin/members', {
+          credentials: 'include',
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setTotalMembers(data.members?.length || 5)
+        }
+      } catch (err) {
+        console.error('Failed to fetch members count:', err)
+      }
+    }
+    fetchMembersCount()
+  }, [])
 
   // Join room and listen for new messages via WebSocket
   useEffect(() => {
@@ -62,15 +85,113 @@ export function MessageList({ roomId, currentUserId }: MessageListProps) {
       setTypingUsers((prev) => prev.filter((u) => u.userId !== data.userId))
     }
 
+    // Listen for message read events
+    const handleMessageRead = (data: { messageId: string; readerId: string; readerName: string; readAt: string }) => {
+      queryClient.setQueryData(['chat', roomId, 'messages'], (old: any) => {
+        if (!old) return old
+
+        return {
+          ...old,
+          messages: old.messages.map((msg: any) =>
+            msg.id === data.messageId
+              ? {
+                  ...msg,
+                  reads: [
+                    ...(msg.reads || []),
+                    {
+                      readerId: data.readerId,
+                      readAt: data.readAt,
+                      reader: { name: data.readerName },
+                    },
+                  ],
+                }
+              : msg
+          ),
+        }
+      })
+    }
+
+    const handleMessageEdit = (data: { messageId: string; content: string; isEdited: boolean; editedAt: string }) => {
+      queryClient.setQueryData(['chat', roomId, 'messages'], (old: any) => {
+        if (!old) return old
+
+        return {
+          ...old,
+          messages: old.messages.map((msg: any) =>
+            msg.id === data.messageId
+              ? { ...msg, content: data.content, isEdited: data.isEdited, editedAt: data.editedAt }
+              : msg
+          ),
+        }
+      })
+    }
+
+    // Listen for message reaction events
+    const handleMessageReaction = (data: {
+      messageId: string
+      userId: string
+      userName: string
+      emoji: string
+      action: 'added' | 'removed'
+    }) => {
+      queryClient.setQueryData(['chat', roomId, 'messages'], (old: any) => {
+        if (!old) return old
+
+        return {
+          ...old,
+          messages: old.messages.map((msg: any) => {
+            if (msg.id !== data.messageId) return msg
+
+            const reactions = msg.reactions || []
+
+            if (data.action === 'added') {
+              // Add reaction (check if it already exists to avoid duplicates)
+              const exists = reactions.some(
+                (r: any) => r.userId === data.userId && r.emoji === data.emoji
+              )
+              if (exists) return msg
+
+              return {
+                ...msg,
+                reactions: [
+                  ...reactions,
+                  {
+                    id: `temp-${Date.now()}`,
+                    userId: data.userId,
+                    emoji: data.emoji,
+                    user: { name: data.userName },
+                  },
+                ],
+              }
+            } else {
+              // Remove reaction
+              return {
+                ...msg,
+                reactions: reactions.filter(
+                  (r: any) => !(r.userId === data.userId && r.emoji === data.emoji)
+                ),
+              }
+            }
+          }),
+        }
+      })
+    }
+
     socket.on('new-message', handleNewMessage)
     socket.on('user-typing', handleUserTyping)
     socket.on('user-stopped-typing', handleUserStoppedTyping)
+    socket.on('message-read', handleMessageRead)
+    socket.on('message-reaction', handleMessageReaction)
+    socket.on('message-edit', handleMessageEdit)
 
     // Cleanup
     return () => {
       socket.off('new-message', handleNewMessage)
       socket.off('user-typing', handleUserTyping)
       socket.off('user-stopped-typing', handleUserStoppedTyping)
+      socket.off('message-read', handleMessageRead)
+      socket.off('message-reaction', handleMessageReaction)
+      socket.off('message-edit', handleMessageEdit)
       socket.emit('leave-room', roomId)
     }
   }, [socket, roomId, queryClient, currentUserId])
@@ -110,13 +231,26 @@ export function MessageList({ roomId, currentUserId }: MessageListProps) {
 
   return (
     <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-2">
-      {messages.map((message: any) => (
-        <MessageItem
-          key={message.id}
-          message={message}
-          isCurrentUser={message.sender.id === currentUserId}
-        />
-      ))}
+      {messages.map((message: any, index: number) => {
+        // 날짜 구분선 표시 여부 확인
+        const showDateSeparator =
+          index === 0 ||
+          !isSameDay(new Date(messages[index - 1].createdAt), new Date(message.createdAt))
+
+        return (
+          <div key={message.id} id={`message-${message.id}`}>
+            {showDateSeparator && <DateSeparator date={message.createdAt} />}
+            <MessageItem
+              message={message}
+              isCurrentUser={message.sender.id === currentUserId}
+              currentUserId={currentUserId}
+              totalMembers={totalMembers}
+              onReply={onReply}
+              onRetry={onRetry}
+            />
+          </div>
+        )
+      })}
       <TypingIndicator typingUsers={typingUsers} />
       <div ref={messagesEndRef} />
     </div>

@@ -8,6 +8,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { Trash2, User } from 'lucide-react'
+import { differenceInCalendarDays, format } from 'date-fns'
+import { ko } from 'date-fns/locale'
 
 interface TodoItemProps {
   todo: {
@@ -15,6 +17,8 @@ interface TodoItemProps {
     title: string
     description: string | null
     isDone: boolean
+    dueDate?: string | null
+    priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
     createdAt: string
     creator: {
       id: string
@@ -67,6 +71,15 @@ export function TodoItem({ todo, currentUserId }: TodoItemProps) {
 
   const creatorLetter = todo.creator.name.charAt(0).toUpperCase()
   const assigneeLetter = todo.assignee?.name.charAt(0).toUpperCase()
+  const dueDate = todo.dueDate ? new Date(todo.dueDate) : null
+  const daysLeft = dueDate ? differenceInCalendarDays(dueDate, new Date()) : null
+
+  const priorityStyles: Record<string, string> = {
+    LOW: 'bg-muted text-muted-foreground',
+    MEDIUM: 'bg-primary/10 text-primary',
+    HIGH: 'bg-amber-500/15 text-amber-600',
+    URGENT: 'bg-destructive/15 text-destructive',
+  }
 
   return (
     <Card className={`group transition-all duration-200 ${todo.isDone ? 'opacity-60 bg-success/5' : ''}`}>
@@ -92,6 +105,24 @@ export function TodoItem({ todo, currentUserId }: TodoItemProps) {
               </p>
             )}
             <div className="flex items-center gap-3 mt-3 flex-wrap">
+              {todo.priority && (
+                <Badge className={`text-xs px-2 py-0.5 ${priorityStyles[todo.priority] || ''}`}>
+                  {todo.priority === 'LOW' && '낮음'}
+                  {todo.priority === 'MEDIUM' && '보통'}
+                  {todo.priority === 'HIGH' && '높음'}
+                  {todo.priority === 'URGENT' && '긴급'}
+                </Badge>
+              )}
+              {dueDate && (
+                <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                  {format(dueDate, 'M월 d일', { locale: ko })}
+                  {daysLeft !== null && (
+                    <span className="ml-1 text-muted-foreground">
+                      {daysLeft === 0 ? '(D-day)' : daysLeft > 0 ? `(D-${daysLeft})` : `(D+${Math.abs(daysLeft)})`}
+                    </span>
+                  )}
+                </Badge>
+              )}
               <div className="flex items-center gap-1.5">
                 <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-xs font-bold text-primary">
                   {creatorLetter}

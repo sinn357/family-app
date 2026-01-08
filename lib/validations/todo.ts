@@ -7,6 +7,8 @@ export const createTodoSchema = z.object({
   title: z.string().min(1, 'Title is required').max(300),
   description: z.string().max(5000).optional(),
   assignedTo: z.string().cuid().optional(),
+  dueDate: z.string().datetime().optional().nullable(),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
 })
 
 export type CreateTodoInput = z.infer<typeof createTodoSchema>
@@ -19,6 +21,8 @@ export const updateTodoSchema = z.object({
   description: z.string().max(5000).optional(),
   isDone: z.boolean().optional(),
   assignedTo: z.string().cuid().nullable().optional(),
+  dueDate: z.string().datetime().nullable().optional(),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
 })
 
 export type UpdateTodoInput = z.infer<typeof updateTodoSchema>

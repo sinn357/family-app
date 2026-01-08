@@ -11,7 +11,7 @@ cloudinary.config({
 
 /**
  * POST /api/upload
- * Upload image to Cloudinary
+ * Upload media to Cloudinary
  */
 export async function POST(request: NextRequest) {
   try {
@@ -29,19 +29,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const isImage = file.type.startsWith('image/')
+    const isVideo = file.type.startsWith('video/')
+
     // Validate file type
-    if (!file.type.startsWith('image/')) {
+    if (!isImage && !isVideo) {
       return NextResponse.json(
-        { error: 'File must be an image' },
+        { error: 'File must be an image or video' },
         { status: 400 }
       )
     }
 
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024 // 5MB
+    // Validate file size (max 5MB for images, 100MB for videos)
+    const maxSize = isVideo ? 100 * 1024 * 1024 : 5 * 1024 * 1024
     if (file.size > maxSize) {
       return NextResponse.json(
-        { error: 'File size must be less than 5MB' },
+        { error: isVideo ? 'Video size must be less than 100MB' : 'Image size must be less than 5MB' },
         { status: 400 }
       )
     }
@@ -55,12 +58,16 @@ export async function POST(request: NextRequest) {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: 'family-app',
-          resource_type: 'image',
-          transformation: [
-            { width: 1200, height: 1200, crop: 'limit' }, // Limit max dimensions
-            { quality: 'auto:good' }, // Auto-optimize quality
-            { fetch_format: 'auto' }, // Auto-select best format (WebP, etc.)
-          ],
+          resource_type: isVideo ? 'video' : 'image',
+          ...(isImage
+            ? {
+                transformation: [
+                  { width: 1200, height: 1200, crop: 'limit' },
+                  { quality: 'auto:good' },
+                  { fetch_format: 'auto' },
+                ],
+              }
+            : {}),
         },
         (error, result) => {
           if (error) reject(error)
@@ -74,6 +81,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       url: result.secure_url,
       publicId: result.public_id,
+      type: isVideo ? 'video' : 'image',
     })
   } catch (error) {
     if (error instanceof Error && error.message === 'Authentication required') {

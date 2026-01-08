@@ -30,10 +30,19 @@ export async function PATCH(
     const body = await request.json()
     const validated = updateTodoSchema.parse(body)
 
+    const dueDate = validated.dueDate !== undefined
+      ? validated.dueDate
+        ? new Date(validated.dueDate)
+        : null
+      : undefined
+
     // Update todo
     const todo = await prisma.todo.update({
       where: { id: todoId },
-      data: validated,
+      data: {
+        ...validated,
+        ...(dueDate !== undefined ? { dueDate } : {}),
+      },
       include: {
         creator: {
           select: {

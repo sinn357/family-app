@@ -28,9 +28,10 @@ import { toast } from 'sonner'
 
 interface TodoFormProps {
   onSuccess?: () => void
+  initialDueDate?: Date | null
 }
 
-export function TodoForm({ onSuccess }: TodoFormProps) {
+export function TodoForm({ onSuccess, initialDueDate }: TodoFormProps) {
   const createTodo = useCreateTodo()
   const [error, setError] = useState<string | null>(null)
   const [members, setMembers] = useState<Array<{ id: string; name: string }>>([])
@@ -41,6 +42,8 @@ export function TodoForm({ onSuccess }: TodoFormProps) {
       title: '',
       description: '',
       assignedTo: undefined,
+      dueDate: undefined,
+      priority: 'MEDIUM',
     },
   })
 
@@ -62,10 +65,22 @@ export function TodoForm({ onSuccess }: TodoFormProps) {
     fetchMembers()
   }, [])
 
+  useEffect(() => {
+    if (initialDueDate) {
+      form.setValue('dueDate', initialDueDate.toISOString())
+    }
+  }, [initialDueDate, form])
+
   async function onSubmit(data: CreateTodoInput) {
     try {
       setError(null)
-      await createTodo.mutateAsync(data)
+      const payload: CreateTodoInput = {
+        ...data,
+        assignedTo: data.assignedTo || undefined,
+        dueDate: data.dueDate ? new Date(data.dueDate).toISOString() : undefined,
+        priority: data.priority || 'MEDIUM',
+      }
+      await createTodo.mutateAsync(payload)
       toast.success('할일이 추가되었습니다!')
       form.reset()
       onSuccess?.()
@@ -129,8 +144,10 @@ export function TodoForm({ onSuccess }: TodoFormProps) {
             <FormItem>
               <FormLabel>담당자 (선택)</FormLabel>
               <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
+                onValueChange={(value) => {
+                  field.onChange(value === 'unassigned' ? undefined : value)
+                }}
+                defaultValue={field.value || 'unassigned'}
                 disabled={createTodo.isPending}
               >
                 <FormControl>
@@ -151,6 +168,55 @@ export function TodoForm({ onSuccess }: TodoFormProps) {
             </FormItem>
           )}
         />
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="dueDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>마감일 (선택)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="date"
+                    value={field.value ? field.value.split('T')[0] : ''}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    disabled={createTodo.isPending}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="priority"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>우선순위</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value || 'MEDIUM'}
+                  disabled={createTodo.isPending}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="우선순위 선택" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="LOW">낮음</SelectItem>
+                    <SelectItem value="MEDIUM">보통</SelectItem>
+                    <SelectItem value="HIGH">높음</SelectItem>
+                    <SelectItem value="URGENT">긴급</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <Button type="submit" disabled={createTodo.isPending}>
           {createTodo.isPending ? '추가 중...' : '할일 추가'}

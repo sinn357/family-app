@@ -15,10 +15,20 @@ export async function GET(
   try {
     await requireAuth()
     const { roomId } = await params
+    const { searchParams } = new URL(request.url)
+    const search = searchParams.get('search')?.trim()
 
     // Get messages from the room
     const messages = await prisma.chatMessage.findMany({
-      where: { roomId },
+      where: {
+        roomId,
+        ...(search
+          ? {
+              isDeleted: false,
+              content: { contains: search, mode: 'insensitive' as const },
+            }
+          : {}),
+      },
       include: {
         sender: {
           select: {
@@ -26,11 +36,46 @@ export async function GET(
             name: true,
           },
         },
+        replyTo: {
+          select: {
+            id: true,
+            content: true,
+            sender: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        reads: {
+          select: {
+            readerId: true,
+            readAt: true,
+            reader: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        reactions: {
+          select: {
+            id: true,
+            userId: true,
+            emoji: true,
+            createdAt: true,
+            user: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         createdAt: 'asc',
       },
-      take: 100, // Limit to last 100 messages
+      take: search ? 50 : 100, // Limit to last 100 messages
     })
 
     return NextResponse.json({ messages })
@@ -68,14 +113,51 @@ export async function POST(
       data: {
         roomId,
         senderId: member.id,
-        content: validated.content,
-        imageUrl: validated.imageUrl || null,
+        content: validated.content?.trim() || '',
+        mediaUrls: validated.mediaUrls || [],
+        mediaTypes: validated.mediaTypes || [],
+        replyToId: validated.replyToId || null,
       },
       include: {
         sender: {
           select: {
             id: true,
             name: true,
+          },
+        },
+        replyTo: {
+          select: {
+            id: true,
+            content: true,
+            sender: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        reads: {
+          select: {
+            readerId: true,
+            readAt: true,
+            reader: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        reactions: {
+          select: {
+            id: true,
+            userId: true,
+            emoji: true,
+            createdAt: true,
+            user: {
+              select: {
+                name: true,
+              },
+            },
           },
         },
       },
