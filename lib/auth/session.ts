@@ -53,8 +53,8 @@ export async function getSession(): Promise<JWTPayload | null> {
   })
 
   if (!session || session.expiresAt < new Date()) {
-    // Session expired or doesn't exist, clear cookie
-    await deleteSession()
+    // Session expired or doesn't exist.
+    // Avoid mutating cookies during Server Component render.
     return null
   }
 
