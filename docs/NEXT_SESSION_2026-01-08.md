@@ -98,71 +98,9 @@ socket.on('message-reaction', (data) => {
 
 ## ⚠️ 다음 세션에서 해야 할 작업
 
-### 🔴 우선순위 1: 이모지 리액션 완성 (Codex 위임)
+현재 문서 기준의 작업은 모두 완료되었습니다.
 
-#### 1. Socket.IO 서버 이벤트 핸들러 확인/추가
-**파일**: 찾아야 함 (`server.ts` 또는 Socket.IO 설정 파일)
-
-**필요한 작업**:
-- `message-reaction` 이벤트 핸들러가 있는지 확인
-- 없다면 추가:
-```typescript
-socket.on('message-reaction', (data) => {
-  io.to(roomId).emit('message-reaction', data)
-})
-```
-
-**참고**:
-- API route에서 이미 emit 하고 있음: `app/api/chat/messages/[messageId]/reactions/route.ts:83-91`
-- 하지만 서버 측 핸들러도 필요할 수 있음
-
-#### 2. 빌드 테스트 및 타입 에러 수정
-```bash
-npm run build
-```
-
-**예상 이슈**:
-- Popover, Tooltip 컴포넌트 import 문제
-- 타입 에러 (reactions 타입 정의)
-
-#### 3. 실제 기능 테스트
-- [ ] 메시지에 이모지 리액션 추가
-- [ ] 같은 이모지 재클릭 → 삭제 확인
-- [ ] 여러 사람이 같은 이모지 → 숫자 증가 확인
-- [ ] 다른 브라우저/탭에서 실시간 동기화 확인
-- [ ] Tooltip 표시 (리액션한 사람 이름)
-
-#### 4. 버그 수정 (발견 시)
-- 리액션 중복 추가 방지
-- Socket.IO 이벤트 누락 처리
-- UI 깨짐 현상
-
----
-
-## 🟡 우선순위 2: 남은 채팅 기능
-
-### 동영상 + 다중 파일 첨부
-**참고**: `docs/APP_IMPROVEMENT_PLAN.md` 섹션 2
-
-**작업 내용**:
-1. Cloudinary Widget 통합 (클라이언트 직접 업로드)
-2. DB 스키마 수정 (`imageUrl` → `mediaUrls[]`)
-3. 여러 파일 선택 UI
-4. 동영상 재생 UI
-
-**예상 시간**: 2시간
-
----
-
-## 🟢 우선순위 3: 설정 페이지 간소화
-**참고**: `docs/APP_IMPROVEMENT_PLAN.md` 섹션 6
-
-**작업 내용**:
-1. 간소화된 설정 메뉴 (4개 항목)
-2. 아이콘 + 설명 UI
-3. 관리자 메뉴 분리
-
-**예상 시간**: 30분
+새로운 개선 과제가 생기면 이 섹션에 추가하세요.
 
 ---
 
