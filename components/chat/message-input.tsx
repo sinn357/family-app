@@ -8,7 +8,7 @@ import { useSendMessage } from '@/lib/hooks/use-chat'
 import { useSocket } from '@/lib/hooks/use-socket'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { MediaUpload, type MediaItem } from '@/components/ui/media-upload'
+import type { MediaItem } from '@/components/ui/media-upload'
 import { ReplyPreview } from './reply-preview'
 import {
   Form,
@@ -18,6 +18,8 @@ import {
   FormLabel,
 } from '@/components/ui/form'
 import { toast } from 'sonner'
+import { Plus, X, Loader2 } from 'lucide-react'
+import Image from 'next/image'
 
 interface MessageInputProps {
   roomId: string
@@ -34,6 +36,9 @@ export function MessageInput({ roomId, currentUserId, currentUserName, replyingT
   const [error, setError] = useState<string | null>(null)
   const [isTyping, setIsTyping] = useState(false)
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const form = useForm<SendMessageInput>({
@@ -72,6 +77,84 @@ export function MessageInput({ roomId, currentUserId, currentUserName, replyingT
     form.setValue('mediaUrls', mediaItems.map((item) => item.url))
     form.setValue('mediaTypes', mediaItems.map((item) => item.type))
   }, [mediaItems, form])
+
+  const handleAttachClick = () => {
+    if (isUploading) return
+    fileInputRef.current?.click()
+  }
+
+  const handleRemoveMedia = (index: number) => {
+    setMediaItems((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    if (mediaItems.length + files.length > 10) {
+      toast.error('최대 10개까지 첨부할 수 있습니다')
+      return
+    }
+
+    const validFiles = files.filter((file) => {
+      const isImage = file.type.startsWith('image/')
+      const isVideo = file.type.startsWith('video/')
+      if (!isImage && !isVideo) {
+        toast.error('이미지 또는 동영상만 첨부할 수 있습니다')
+        return false
+      }
+
+      const maxSize = isVideo ? 100 * 1024 * 1024 : 5 * 1024 * 1024
+      if (file.size > maxSize) {
+        toast.error(isVideo ? '동영상은 100MB 이하만 가능합니다' : '이미지는 5MB 이하만 가능합니다')
+        return false
+      }
+
+      return true
+    })
+
+    if (validFiles.length === 0) return
+
+    setIsUploading(true)
+    setUploadProgress({ current: 0, total: validFiles.length })
+
+    try {
+      const uploaded: MediaItem[] = []
+      for (let i = 0; i < validFiles.length; i += 1) {
+        const file = validFiles[i]
+        setUploadProgress({ current: i + 1, total: validFiles.length })
+
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        })
+
+        if (!res.ok) {
+          const error = await res.json()
+          throw new Error(error.error || 'Upload failed')
+        }
+
+        const data = await res.json()
+        uploaded.push({ url: data.url, type: data.type })
+      }
+
+      setMediaItems((prev) => [...prev, ...uploaded])
+      toast.success('첨부 완료')
+    } catch (error) {
+      console.error('Media upload error:', error)
+      toast.error(error instanceof Error ? error.message : '첨부 실패')
+    } finally {
+      setIsUploading(false)
+      setUploadProgress(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
 
   // Handle typing indicator
   const handleTyping = () => {
@@ -173,22 +256,64 @@ export function MessageInput({ roomId, currentUserId, currentUserName, replyingT
         )}
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-          {/* Media Upload */}
-          <FormItem>
-            <FormLabel className="text-xs font-medium text-muted-foreground">
-              📎 사진/동영상 첨부 (선택)
-            </FormLabel>
-            <FormControl>
-              <MediaUpload
-                value={mediaItems}
-                onChange={setMediaItems}
-                disabled={sendMessage.isPending}
-              />
-            </FormControl>
-          </FormItem>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            onChange={handleFileSelect}
+            disabled={sendMessage.isPending || isUploading}
+            className="hidden"
+          />
+
+          {mediaItems.length > 0 && (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {mediaItems.map((item, index) => (
+                <div key={`${item.url}-${index}`} className="relative rounded-lg overflow-hidden border border-border">
+                  {item.type === 'image' ? (
+                    <div className="relative aspect-video">
+                      <Image
+                        src={item.url}
+                        alt="첨부 이미지"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <video
+                      src={item.url}
+                      controls
+                      className="h-28 w-full object-cover"
+                      preload="metadata"
+                    />
+                  )}
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 h-7 w-7"
+                    onClick={() => handleRemoveMedia(index)}
+                    disabled={sendMessage.isPending || isUploading}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Message Input and Send Button */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-end">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={handleAttachClick}
+              disabled={sendMessage.isPending || isUploading}
+              className="h-10 w-10 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
+            >
+              {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-5 w-5" />}
+            </Button>
             <FormField
               control={form.control}
               name="content"
@@ -216,6 +341,7 @@ export function MessageInput({ roomId, currentUserId, currentUserName, replyingT
               size="lg"
               disabled={
                 sendMessage.isPending ||
+                isUploading ||
                 (!form.watch('content')?.trim() && mediaItems.length === 0)
               }
               className="self-end"
@@ -223,6 +349,12 @@ export function MessageInput({ roomId, currentUserId, currentUserName, replyingT
               {sendMessage.isPending ? '📤' : '🚀'}
             </Button>
           </div>
+
+          {uploadProgress && (
+            <p className="text-xs text-muted-foreground">
+              업로드 {uploadProgress.current}/{uploadProgress.total}
+            </p>
+          )}
 
           {form.formState.errors.content && (
             <p className="text-sm text-destructive">

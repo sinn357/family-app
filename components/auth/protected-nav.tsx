@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Settings } from 'lucide-react'
 import { NotificationBell } from '@/components/notifications/notification-bell'
 import { SearchDialog } from '@/components/search/search-dialog'
 
@@ -88,6 +88,11 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
           <div className="hidden md:flex items-center space-x-4">
             <SearchDialog />
             <NotificationBell userId={member.id} />
+            <Link href="/settings" className="inline-flex">
+              <Button variant="ghost" size="icon" className="relative">
+                <Settings className="h-5 w-5" />
+              </Button>
+            </Link>
             <span className="text-sm text-foreground/80 flex items-center gap-2">
               {member.name}
               {member.role === 'ADMIN' && (

@@ -70,7 +70,13 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="container mx-auto py-4 px-2 md:py-8 md:px-4">
+    <div className="container mx-auto py-4 px-2 md:py-8 md:px-4 space-y-4 md:space-y-6">
+      <div className="rounded-2xl border border-border/60 bg-card/70 p-4 md:p-6 backdrop-blur-md">
+        <h1 className="text-2xl md:text-3xl font-bold">가족 채팅</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          오늘의 이야기를 나누고 사진과 동영상을 공유해요.
+        </p>
+      </div>
       <OnlineUsers onlineUsers={onlineUsers} currentUserId={currentUserId} />
       <ChatRoom
         roomId={defaultRoom.id}

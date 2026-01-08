@@ -28,34 +28,34 @@ export function MediaTabs({ currentUserId, defaultTab = 'photos' }: MediaTabsPro
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <Button
-          variant={activeTab === 'photos' ? 'default' : 'outline'}
-          onClick={() => setActiveTab('photos')}
-          className="gap-2"
-        >
-          <Camera className="w-4 h-4" />
-          사진
-        </Button>
-        <Button
-          variant={activeTab === 'files' ? 'default' : 'outline'}
-          onClick={() => setActiveTab('files')}
-          className="gap-2"
-        >
-          <FolderOpen className="w-4 h-4" />
-          파일
-        </Button>
+      <div className="rounded-2xl border border-border/60 bg-card/70 p-4 md:p-6 backdrop-blur-md">
+        <h1 className="text-2xl md:text-3xl font-bold">가족 미디어</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          사진과 문서를 한 곳에서 관리하세요.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Button
+            variant={activeTab === 'photos' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('photos')}
+            className="gap-2"
+          >
+            <Camera className="w-4 h-4" />
+            사진
+          </Button>
+          <Button
+            variant={activeTab === 'files' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('files')}
+            className="gap-2"
+          >
+            <FolderOpen className="w-4 h-4" />
+            파일
+          </Button>
+        </div>
       </div>
 
       {activeTab === 'photos' && (
         <div className="space-y-6">
           <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold">Family Album</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Cherish our moments together 📷
-              </p>
-            </div>
             <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
               <DialogTrigger asChild>
                 <Button size="lg" className="gap-2">
