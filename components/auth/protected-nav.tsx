@@ -37,15 +37,10 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
   }
 
   const navLinks = [
-    { href: '/home', label: '홈', emoji: '🏡' },
-    { href: '/chat', label: '채팅', emoji: '💬' },
-    { href: '/board', label: '게시판', emoji: '📌' },
-    { href: '/todos', label: '할일', emoji: '✅' },
-    { href: '/photos', label: '사진', emoji: '🌸' },
-    { href: '/files', label: '파일', emoji: '🗂️' },
-    { href: '/calendar', label: '캘린더', emoji: '🗓️' },
-    { href: '/settings', label: '설정', emoji: '⚙️' },
-    ...(member.role === 'ADMIN' ? [{ href: '/admin', label: '관리자', emoji: '🛡️' }] : []),
+    { href: '/chat', label: '채팅' },
+    { href: '/board', label: '게시판' },
+    { href: '/todos', label: '일정' },
+    { href: '/photos', label: '앨범' },
   ]
 
   return (
@@ -73,10 +68,7 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
                   <span className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/5 to-accent/5 group-hover:from-primary/15 group-hover:to-accent/15 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/10" />
 
                   {/* Content */}
-                  <span className="relative text-xl group-hover:animate-bounce">
-                    {link.emoji}
-                  </span>
-                  <span className="relative text-foreground/70 group-hover:text-primary transition-colors hidden lg:inline">
+                  <span className="relative text-foreground/70 group-hover:text-primary transition-colors">
                     {link.label}
                   </span>
                 </Link>
@@ -136,7 +128,6 @@ export function ProtectedNav({ member }: ProtectedNavProps) {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-br hover:from-primary/10 hover:to-accent/10 text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
                 >
-                  <span className="text-2xl">{link.emoji}</span>
                   <span className="text-foreground/80 group-hover:text-primary transition-colors">
                     {link.label}
                   </span>

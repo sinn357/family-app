@@ -2,9 +2,19 @@ import { redirect } from 'next/navigation'
 import { getCurrentMember } from '@/lib/auth'
 import { ProtectedNav } from '@/components/auth/protected-nav'
 import { NotificationSettings } from '@/components/notifications/notification-settings'
+import { MemberList } from '@/components/admin/member-list'
+import { MemberForm } from '@/components/admin/member-form'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import Link from 'next/link'
-import { Bell, User, Info, LifeBuoy, Shield } from 'lucide-react'
+import { Bell, User, Info, LifeBuoy, Shield, Plus } from 'lucide-react'
 
 export default async function SettingsPage() {
   const member = await getCurrentMember()
@@ -64,26 +74,6 @@ export default async function SettingsPage() {
             </a>
           </section>
 
-          {member.role === 'ADMIN' && (
-            <section>
-              <Card className="border-primary/30">
-                <CardHeader className="flex flex-row items-center gap-3 p-4">
-                  <Shield className="h-5 w-5 text-primary" />
-                  <div className="flex-1">
-                    <CardTitle className="text-sm">관리자 설정</CardTitle>
-                    <CardDescription className="text-xs">가족 구성원 관리</CardDescription>
-                  </div>
-                  <Link
-                    href="/admin"
-                    className="text-sm text-primary hover:underline"
-                  >
-                    이동
-                  </Link>
-                </CardHeader>
-              </Card>
-            </section>
-          )}
-
           <section id="notifications">
             <Card>
               <CardHeader>
@@ -140,6 +130,39 @@ export default async function SettingsPage() {
               </CardContent>
             </Card>
           </section>
+
+          {member.role === 'ADMIN' && (
+            <section id="admin">
+              <Card>
+                <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <Shield className="h-5 w-5 text-primary" />
+                    <div>
+                      <CardTitle>관리자 설정</CardTitle>
+                      <CardDescription>가족 구성원을 관리합니다</CardDescription>
+                    </div>
+                  </div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="gap-2">
+                        <Plus className="h-4 w-4" />
+                        구성원 추가
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>가족 구성원 추가</DialogTitle>
+                      </DialogHeader>
+                      <MemberForm />
+                    </DialogContent>
+                  </Dialog>
+                </CardHeader>
+                <CardContent>
+                  <MemberList />
+                </CardContent>
+              </Card>
+            </section>
+          )}
         </div>
       </main>
     </>

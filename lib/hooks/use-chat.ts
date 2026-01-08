@@ -141,10 +141,29 @@ export function useSendMessage(roomId: string, currentUserId: string, currentUse
       queryClient.setQueryData(['chat', roomId, 'messages'], (old: any) => {
         if (!old) return old
 
-        // Remove temp message and let WebSocket add the real one
+        const realMessage = data?.message
+        if (!realMessage) {
+          return old
+        }
+
+        const exists = old.messages.some((msg: any) => msg.id === realMessage.id)
+        if (exists) {
+          return {
+            ...old,
+            messages: old.messages.filter((msg: any) => msg.id !== context?.tempId),
+          }
+        }
+
+        const hasTemp = old.messages.some((msg: any) => msg.id === context?.tempId)
+        const updatedMessages = hasTemp
+          ? old.messages.map((msg: any) =>
+              msg.id === context?.tempId ? realMessage : msg
+            )
+          : [...old.messages, realMessage]
+
         return {
           ...old,
-          messages: old.messages.filter((msg: any) => msg.id !== context?.tempId),
+          messages: updatedMessages,
         }
       })
     },

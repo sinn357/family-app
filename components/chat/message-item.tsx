@@ -373,7 +373,7 @@ export function MessageItem({ message, isCurrentUser, currentUserId, totalMember
 
             {/* Action buttons */}
             {isHovered && !isDeleting && (
-              <div className={`absolute ${isCurrentUser ? '-left-20' : '-right-20'} top-1/2 -translate-y-1/2 flex ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'} gap-1 opacity-0 group-hover:opacity-100 transition-opacity`}>
+              <div className={`absolute ${isCurrentUser ? 'right-2' : 'left-2'} -top-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity`}>
                 {/* Emoji reaction button */}
                 <EmojiPicker
                   onEmojiSelect={handleReaction}
